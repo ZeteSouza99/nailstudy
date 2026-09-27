@@ -45,26 +45,28 @@ export async function seedDemoData(db: Database) {
   const offset = weekOffsetDays();
   const withTokens = hasTokenSecret();
 
-  await db
-    .insert(clients)
-    .values(mockClients.map((client) => ({ ...client, phoneDigits: normalizePhone(client.phone) })))
-    .onConflictDoNothing();
+  for (const client of mockClients) {
+    await db
+      .insert(clients)
+      .values({ ...client, phoneDigits: normalizePhone(client.phone) })
+      .onConflictDoNothing();
+  }
 
-  await db
-    .insert(services)
-    .values(
-      mockServices.map(({ price, ...service }) => ({
+  for (const { price, ...service } of mockServices) {
+    await db
+      .insert(services)
+      .values({
         ...service,
         bufferMinutes: 0,
         priceCents: Math.round(price * 100),
-      })),
-    )
-    .onConflictDoNothing();
+      })
+      .onConflictDoNothing();
+  }
 
-  await db
-    .insert(professionals)
-    .values(
-      mockProfessionals.map((professional) => ({
+  for (const professional of mockProfessionals) {
+    await db
+      .insert(professionals)
+      .values({
         id: professional.id,
         name: professional.name,
         role: professional.role,
@@ -75,43 +77,43 @@ export async function seedDemoData(db: Database) {
         active: professional.active,
         workDays: professional.workDays,
         commissionRateBps: commissionByProfessional[professional.id] ?? 0,
-      })),
-    )
-    .onConflictDoNothing();
+      })
+      .onConflictDoNothing();
+  }
 
-  await db
-    .insert(professionalServices)
-    .values(
-      mockProfessionals.flatMap((professional) =>
-        professional.serviceIds.map((serviceId) => ({ professionalId: professional.id, serviceId })),
-      ),
-    )
-    .onConflictDoNothing();
+  for (const professional of mockProfessionals) {
+    for (const serviceId of professional.serviceIds) {
+      await db
+        .insert(professionalServices)
+        .values({ professionalId: professional.id, serviceId })
+        .onConflictDoNothing();
+    }
+  }
 
-  const inserted = await db
-    .insert(appointments)
-    .values(
-      mockAppointments.map(({ price, ...appointment }) => ({
+  const inserted: Array<{ id: string; status: (typeof mockAppointments)[number]["status"] }> = [];
+  for (const { price, ...appointment } of mockAppointments) {
+    const [created] = await db
+      .insert(appointments)
+      .values({
         ...appointment,
         date: addDays(appointment.date, offset),
         priceCents: Math.round(price * 100),
         source: "staff" as const,
         accessTokenHash: withTokens ? accessTokenHashFor(appointment.id) : null,
-      })),
-    )
-    .onConflictDoNothing()
-    .returning({ id: appointments.id, status: appointments.status });
+      })
+      .onConflictDoNothing()
+      .returning({ id: appointments.id, status: appointments.status });
+    if (created) inserted.push(created);
+  }
 
-  if (inserted.length) {
-    await db.insert(appointmentEvents).values(
-      inserted.map((appointment) => ({
+  for (const appointment of inserted) {
+    await db.insert(appointmentEvents).values({
         appointmentId: appointment.id,
         kind: "created" as const,
         status: appointment.status,
         actorSource: "staff" as const,
         note: "Dados de demonstração",
-      })),
-    );
+    });
   }
 
   // Recibos de demonstração para os atendimentos já concluídos.
