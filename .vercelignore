@@ -1,0 +1,9 @@
+.data/
+.e2e-db/
+.env*
+.vercel/
+.vscode/
+test-results/
+playwright-report/
+coverage/
+*.tsbuildinfo

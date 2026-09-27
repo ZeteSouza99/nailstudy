@@ -1,0 +1,42 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# tests
+/coverage
+/test-results
+/playwright-report
+/.e2e-db
+
+# banco local (PGlite)
+/.data
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# local environment files
+.env*
+!.env.example
+!.env.local.example
+.env
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# operating systems and editors
+.DS_Store
+Thumbs.db
+*.swp
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.vercel

@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, tipos, testes e build
+    runs-on: ubuntu-latest
+    env:
+      # O build não consulta o banco; o endereço fictício só satisfaz a configuração.
+      DATABASE_URL: postgresql://ci:ci@localhost/ci
+      AUTH_SECRET: ci-auth-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      # Inclui os testes de integração e de migrations sobre um Postgres embutido (PGlite).
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    name: Testes ponta a ponta
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Sobe o app sobre um banco descartável (e2e/serve.ts); nenhum banco real é tocado.
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
