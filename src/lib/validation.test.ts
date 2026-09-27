@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
 
-import { makeAppointment } from "@/test/factories";
-
-import { can, canChangeAppointmentStatus } from "./permissions";
 import {
   blockSchema,
   clientSchema,
@@ -48,7 +45,6 @@ describe("serviceSchema", () => {
     expect(serviceSchema.parse(parsed)).toEqual(parsed);
   });
 });
-
 describe("professionalSchema", () => {
   const valid = {
     name: "Bruna Souza",
@@ -126,31 +122,5 @@ describe("formDataToObject", () => {
     formData.append("workDays", "Seg");
     formData.append("workDays", "Ter");
     expect(formDataToObject(formData)).toEqual({ name: "Ana", workDays: ["Seg", "Ter"] });
-  });
-});
-
-describe("permissões", () => {
-  const admin = { role: "admin" as const, professionalId: null };
-  const reception = { role: "receptionist" as const, professionalId: null };
-  const ana = { role: "professional" as const, professionalId: "pro-1" };
-
-  it("restringe cadastros por perfil", () => {
-    expect(can("admin", "catalog:manage")).toBe(true);
-    expect(can("receptionist", "catalog:manage")).toBe(false);
-    expect(can("receptionist", "clients:manage")).toBe(true);
-    expect(can("professional", "clients:view")).toBe(false);
-  });
-
-  it("deixa a profissional só iniciar e concluir os próprios atendimentos", () => {
-    const own = makeAppointment({ status: "confirmed", professionalId: "pro-1" });
-    const other = makeAppointment({ status: "confirmed", professionalId: "pro-2" });
-
-    expect(canChangeAppointmentStatus(ana, own, "in-progress")).toBe(true);
-    expect(canChangeAppointmentStatus(ana, own, "cancelled")).toBe(false);
-    expect(canChangeAppointmentStatus(ana, other, "in-progress")).toBe(false);
-    expect(canChangeAppointmentStatus(reception, other, "cancelled")).toBe(true);
-    expect(canChangeAppointmentStatus(admin, makeAppointment({ status: "completed" }), "cancelled")).toBe(
-      false,
-    );
   });
 });

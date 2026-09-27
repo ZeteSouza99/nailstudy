@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 
 import { createDatabase } from "./client";
-import { upsertUser } from "./user-admin";
+import { upsertAdmin } from "./user-admin";
 
 config({ path: ".env.local", quiet: true });
 
@@ -17,13 +17,12 @@ async function main() {
   const { db, close } = await createDatabase(process.env.DATABASE_URL);
 
   try {
-    const result = await upsertUser(db, {
+    const result = await upsertAdmin(db, {
       email,
-      name: process.env.ADMIN_NAME ?? "Administradora",
+      name: process.env.ADMIN_NAME ?? "Administrador",
       password,
-      role: "admin",
     });
-    console.log(`${result.created ? "Criado" : "Atualizado"}: ${email} (admin).`);
+    console.log(`${result.created ? "Criado" : "Atualizado"}: ${email} (administrador).`);
   } finally {
     await close();
   }

@@ -444,7 +444,7 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
           </div>
 
           <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-            Seu agendamento fica pendente até a recepção confirmar. Você recebe
+            Seu agendamento fica pendente até o estúdio confirmar. Você recebe
             um link para acompanhar, remarcar ou cancelar.
           </p>
 

@@ -24,7 +24,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { addDays, getWeekDays, getWeekStart, parseDateKey } from "@/lib/date";
 import { appointmentStatusConfig } from "@/lib/domain-config";
 import { cn, formatCurrency, normalizeText } from "@/lib/formatters";
-import { can } from "@/lib/permissions";
 import {
   calculateBookedMinutes,
   calculateDailyCapacityMinutes,
@@ -36,7 +35,6 @@ import type {
   Professional,
   ScheduleBlock,
   Service,
-  SessionUser,
 } from "@/types/domain";
 
 import { AppointmentDetails } from "./appointment-details";
@@ -63,7 +61,6 @@ interface AgendaViewProps {
   selectedDate: string;
   view: CalendarView;
   initiallyOpen: boolean;
-  viewer: Pick<SessionUser, "role" | "professionalId">;
 }
 
 export function AgendaView({
@@ -75,7 +72,6 @@ export function AgendaView({
   selectedDate,
   view,
   initiallyOpen,
-  viewer,
 }: AgendaViewProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -88,8 +84,6 @@ export function AgendaView({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
 
-  const canCreate = can(viewer.role, "appointments:create");
-  const viewAll = can(viewer.role, "agenda:view-all");
   const colorByProfessional = useMemo(
     () => new Map(professionals.map((professional) => [professional.id, professional.color])),
     [professionals],
@@ -153,15 +147,13 @@ export function AgendaView({
     <div className="space-y-6">
       <PageHeader
         eyebrow="Atendimentos"
-        title={viewAll ? "Agenda" : "Minha agenda"}
+        title="Agenda"
         description="Organize horários, acompanhe confirmações e filtre a rotina da equipe."
         actions={
-          canCreate ? (
-            <Button onClick={() => openNewAppointment()}>
-              <Plus className="size-4" aria-hidden="true" />
-              Novo agendamento
-            </Button>
-          ) : null
+          <Button onClick={() => openNewAppointment()}>
+            <Plus className="size-4" aria-hidden="true" />
+            Novo agendamento
+          </Button>
         }
       />
 
@@ -237,8 +229,7 @@ export function AgendaView({
             <SlidersHorizontal className="size-3.5" aria-hidden="true" />
             Filtros
           </span>
-          {viewAll ? (
-            <>
+          <>
               <label className="sr-only" htmlFor="professional-filter">
                 Filtrar por profissional
               </label>
@@ -256,8 +247,7 @@ export function AgendaView({
                   </option>
                 ))}
               </select>
-            </>
-          ) : null}
+          </>
           <label className="sr-only" htmlFor="status-filter">
             Filtrar por situação
           </label>
@@ -301,7 +291,7 @@ export function AgendaView({
             blocks={blocks}
             selectedDate={selectedDate}
             today={today}
-            canCreate={canCreate}
+            canCreate
             colorByProfessional={colorByProfessional}
             colorByService={colorByService}
             nameByProfessional={nameByProfessional}
@@ -314,9 +304,9 @@ export function AgendaView({
             date={selectedDate}
             appointments={filteredAppointments}
             allDayAppointments={appointments}
-            professionals={viewAll ? professionals : professionals.filter((item) => item.id === viewer.professionalId)}
+            professionals={professionals}
             blocks={blocks}
-            canCreate={canCreate}
+            canCreate
             colorByProfessional={colorByProfessional}
             colorByService={colorByService}
             nameByProfessional={nameByProfessional}
@@ -326,8 +316,7 @@ export function AgendaView({
         )}
       </div>
 
-      {canCreate ? (
-        <Modal
+      <Modal
           open={isCreating}
           onClose={closeNewAppointment}
           title="Novo agendamento"
@@ -350,8 +339,7 @@ export function AgendaView({
               }}
             />
           ) : null}
-        </Modal>
-      ) : null}
+      </Modal>
 
       <Modal
         open={Boolean(selectedAppointment)}
@@ -363,7 +351,6 @@ export function AgendaView({
             key={selectedAppointment.id}
             appointment={selectedAppointment}
             professionals={professionals}
-            viewer={viewer}
             today={today}
             onFeedback={setFeedback}
             onClose={() => setSelectedId(null)}

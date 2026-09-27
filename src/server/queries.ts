@@ -14,26 +14,17 @@ import {
 import { ACTIVE_APPOINTMENT_STATUSES } from "@/lib/booking";
 import { getWeekDays } from "@/lib/date";
 import { normalizeText } from "@/lib/formatters";
-import { can } from "@/lib/permissions";
 import type {
   Appointment,
   ClientSummary,
   Professional,
   ScheduleBlock,
   Service,
-  SessionUser,
 } from "@/types/domain";
 
 import { toAppointment, toBlock, toClient, toProfessional, toService } from "./mappers";
 
 const activeStatuses = [...ACTIVE_APPOINTMENT_STATUSES];
-
-/** Filtro para quem só pode ver os próprios atendimentos; `undefined` quando vê todos. */
-function ownAppointmentsFilter(viewer?: SessionUser) {
-  if (!viewer || can(viewer.role, "agenda:view-all")) return undefined;
-  // Perfil profissional sem vínculo não enxerga nenhum atendimento.
-  return eq(appointments.professionalId, viewer.professionalId ?? "");
-}
 
 export async function listServices(): Promise<Service[]> {
   const rows = await db.select().from(services).orderBy(asc(services.name));
@@ -78,7 +69,6 @@ export async function getProfessional(id: string): Promise<Professional | null> 
 export async function listAppointmentsInRange(
   startDate: string,
   endDate: string,
-  viewer?: SessionUser,
 ): Promise<Appointment[]> {
   const rows = await db
     .select()
@@ -87,7 +77,6 @@ export async function listAppointmentsInRange(
       and(
         gte(appointments.date, startDate),
         lte(appointments.date, endDate),
-        ownAppointmentsFilter(viewer),
       ),
     )
     .orderBy(asc(appointments.date), asc(appointments.startTime));
@@ -118,7 +107,7 @@ export async function listUpcomingBlocks(today: string): Promise<ScheduleBlock[]
   return rows.map(toBlock);
 }
 
-/** Pedidos feitos pelo portal que ainda aguardam a confirmação da recepção. */
+/** Pedidos feitos pelo portal que ainda aguardam a confirmação do administrador. */
 export async function listPendingPortalAppointments(today: string): Promise<Appointment[]> {
   const rows = await db
     .select()
@@ -141,7 +130,6 @@ export interface NavigationCounters {
 }
 
 export async function getNavigationCounters(
-  user: SessionUser,
   today: string,
 ): Promise<NavigationCounters> {
   const [todayRow] = await db
@@ -151,13 +139,8 @@ export async function getNavigationCounters(
       and(
         eq(appointments.date, today),
         inArray(appointments.status, activeStatuses),
-        ownAppointmentsFilter(user),
       ),
     );
-
-  if (!can(user.role, "appointments:manage")) {
-    return { todayActive: todayRow?.value ?? 0, portalPending: 0 };
-  }
 
   const [pendingRow] = await db
     .select({ value: count() })
@@ -324,26 +307,22 @@ export async function searchClientOptions(term: string, limit = 12): Promise<Cli
     .limit(limit);
 }
 
-export async function getDashboardData(user: SessionUser, today: string) {
+export async function getDashboardData(today: string) {
   const weekDates = getWeekDays(today);
   const firstDay = weekDates[0];
   const lastDay = weekDates[weekDates.length - 1];
 
   const [weekAppointments, allProfessionals, blocks, clientStats] = await Promise.all([
-    listAppointmentsInRange(firstDay, lastDay, user),
+    listAppointmentsInRange(firstDay, lastDay),
     listProfessionals(),
     listBlocksInRange(firstDay, lastDay),
-    can(user.role, "clients:view") ? getClientStats(today) : Promise.resolve(null),
+    getClientStats(today),
   ]);
-
-  const scopedProfessionals = can(user.role, "agenda:view-all")
-    ? allProfessionals.filter((professional) => professional.active)
-    : allProfessionals.filter((professional) => professional.id === user.professionalId);
 
   return {
     weekDates,
     weekAppointments,
-    professionals: scopedProfessionals,
+    professionals: allProfessionals.filter((professional) => professional.active),
     blocks,
     clientStats,
   };

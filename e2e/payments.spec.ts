@@ -26,7 +26,7 @@ async function finishAppointment(page: Page, name: string) {
 
 test.describe("caixa", () => {
   test("conclui na agenda e cobra com desconto, acréscimo e formas divididas", async ({ page }) => {
-    await login(page, e2eUsers.reception, "/pagamentos");
+    await login(page, e2eUsers.admin, "/pagamentos");
     await expect(page.getByRole("heading", { name: "Pagamentos", exact: true })).toBeVisible();
     await finishAppointment(page, "Caixa Fluxo");
     await page.getByRole("link", { name: "Pagamentos", exact: true }).click();
@@ -54,22 +54,22 @@ test.describe("caixa", () => {
     await expect(next.getByText("Caixa Fluxo", { exact: true })).toHaveCount(0);
   });
 
-  test("atualiza o caixa já aberto após outra profissional concluir", async ({ page, browser }) => {
-    await login(page, e2eUsers.reception, "/pagamentos");
+  test("atualiza o caixa já aberto após outra sessão concluir", async ({ page, browser }) => {
+    await login(page, e2eUsers.admin, "/pagamentos");
     await expect(page.getByRole("heading", { name: "Pagamentos", exact: true })).toBeVisible();
-    const professional = await browser.newPage();
+    const otherSession = await browser.newPage();
     const otherCashier = await browser.newPage();
     try {
-      await login(professional, e2eUsers.professional);
-      await expect(professional.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
-      await finishAppointment(professional, "Caixa Atualização");
+      await login(otherSession, e2eUsers.admin);
+      await expect(otherSession.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
+      await finishAppointment(otherSession, "Caixa Atualização");
 
       const form = await openPayment(page);
       await clientItems(form, "Caixa Atualização").check();
       await form.getByRole("button", { name: "= restante", exact: true }).click();
 
-      // A outra recepção já selecionou o mesmo atendimento antes da primeira cobrança.
-      await login(otherCashier, e2eUsers.reception, "/pagamentos");
+      // Outra sessão já selecionou o mesmo atendimento antes da primeira cobrança.
+      await login(otherCashier, e2eUsers.admin, "/pagamentos");
       const staleForm = await openPayment(otherCashier);
       await clientItems(staleForm, "Caixa Atualização").check();
       await staleForm.getByRole("button", { name: "= restante", exact: true }).click();
@@ -82,7 +82,7 @@ test.describe("caixa", () => {
       const reopened = await openPayment(otherCashier);
       await expect(reopened.getByText("Caixa Atualização", { exact: true })).toHaveCount(0);
     } finally {
-      await professional.close();
+      await otherSession.close();
       await otherCashier.close();
     }
   });
@@ -120,16 +120,8 @@ test.describe("caixa", () => {
     await expect(clientItems(afterDelete, "Caixa Antigo")).toHaveCount(2);
   });
 
-  test("profissional não acessa pagamentos nem relatórios", async ({ page }) => {
-    await login(page, e2eUsers.professional, "/pagamentos");
-    await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Pagamentos", exact: true })).toHaveCount(0);
-    await page.goto("/relatorios");
-    await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
-  });
-
   test("permite tentar novamente quando a consulta de atendimentos falha", async ({ page }) => {
-    await login(page, e2eUsers.reception, "/pagamentos");
+    await login(page, e2eUsers.admin, "/pagamentos");
     await expect(page.getByRole("heading", { name: "Pagamentos", exact: true })).toBeVisible();
     let failNext = true;
     await page.route("**/pagamentos", async (route) => {

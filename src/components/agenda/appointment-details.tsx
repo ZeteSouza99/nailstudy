@@ -24,7 +24,6 @@ import { fieldA11y, FormField } from "@/components/ui/form-field";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { appointmentStatusConfig } from "@/lib/domain-config";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { can, canChangeAppointmentStatus } from "@/lib/permissions";
 import {
   appointmentStatusTransitions,
   CLINIC_CLOSE_TIME,
@@ -36,7 +35,6 @@ import type {
   Appointment,
   AppointmentStatus,
   Professional,
-  SessionUser,
 } from "@/types/domain";
 
 const statusActions: Record<
@@ -53,7 +51,6 @@ const statusActions: Record<
 interface AppointmentDetailsProps {
   appointment: Appointment;
   professionals: Professional[];
-  viewer: Pick<SessionUser, "role" | "professionalId">;
   today: string;
   onFeedback: (message: string) => void;
   onClose: () => void;
@@ -62,7 +59,6 @@ interface AppointmentDetailsProps {
 export function AppointmentDetails({
   appointment,
   professionals,
-  viewer,
   today,
   onFeedback,
   onClose,
@@ -73,12 +69,8 @@ export function AppointmentDetails({
   const [isRescheduling, setIsRescheduling] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const current = { ...appointment, status };
-  const actions = appointmentStatusTransitions[status].filter((target) =>
-    canChangeAppointmentStatus(viewer, current, target),
-  );
-  const canReschedule =
-    can(viewer.role, "appointments:manage") && (status === "scheduled" || status === "confirmed");
+  const actions = appointmentStatusTransitions[status];
+  const canReschedule = status === "scheduled" || status === "confirmed";
 
   function changeStatus(target: AppointmentStatus) {
     setError("");
@@ -180,14 +172,10 @@ export function AppointmentDetails({
       ) : null}
 
       <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
-        {can(viewer.role, "appointments:delete") ? (
-          <Button size="sm" variant="ghost" onClick={() => setIsDeleting(true)}>
-            <Trash2 className="size-4" aria-hidden="true" />
-            Excluir registro
-          </Button>
-        ) : (
-          <span />
-        )}
+        <Button size="sm" variant="ghost" onClick={() => setIsDeleting(true)}>
+          <Trash2 className="size-4" aria-hidden="true" />
+          Excluir registro
+        </Button>
         <Button size="sm" variant="secondary" onClick={onClose}>
           Fechar
         </Button>

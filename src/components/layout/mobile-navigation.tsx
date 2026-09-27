@@ -8,23 +8,19 @@ import { useState } from "react";
 
 import { Modal } from "@/components/ui/modal";
 import { cn } from "@/lib/formatters";
-import type { UserRole } from "@/types/domain";
-
 import { getNavigationSections, type NavigationCounters } from "./navigation";
 
 const itemClass =
   "flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600";
 
 export function MobileNavigation({
-  role,
   counters,
 }: {
-  role: UserRole;
   counters: NavigationCounters;
 }) {
   const pathname = usePathname();
   const [isMoreOpen, setIsMoreOpen] = useState(false);
-  const items = getNavigationSections(role).flatMap((section) => section.items);
+  const items = getNavigationSections().flatMap((section) => section.items);
   const primary = items.filter((item) => item.primaryOnMobile);
   const secondary = items.filter((item) => !item.primaryOnMobile);
 

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { ClientsView } from "@/components/clients/clients-view";
 import { getTodayKey } from "@/lib/date";
-import { can } from "@/lib/permissions";
 import { getClientStats, searchClients, type ClientSegment } from "@/server/queries";
 import { requirePageUser } from "@/server/session";
 
@@ -18,7 +17,7 @@ interface ClientsPageProps {
 }
 
 export default async function ClientsPage({ searchParams }: ClientsPageProps) {
-  const user = await requirePageUser("clients:view");
+  await requirePageUser();
   const params = await searchParams;
   const today = getTodayKey();
   const query = typeof params.q === "string" ? params.q.slice(0, 80) : "";
@@ -40,9 +39,9 @@ export default async function ClientsPage({ searchParams }: ClientsPageProps) {
       page={page}
       pageSize={PAGE_SIZE}
       today={today}
-      canManage={can(user.role, "clients:manage")}
-      canDelete={can(user.role, "clients:delete")}
-      initiallyOpen={params.novo === "1" && can(user.role, "clients:manage")}
+      canManage
+      canDelete
+      initiallyOpen={params.novo === "1"}
     />
   );
 }

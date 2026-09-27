@@ -11,9 +11,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { can, type Permission } from "@/lib/permissions";
-import type { UserRole } from "@/types/domain";
-
 /** Contadores calculados no servidor e exibidos ao lado do item. */
 export type NavigationBadge = "todayActive" | "portalPending";
 
@@ -24,7 +21,6 @@ export interface NavigationItem {
   href: string;
   icon: LucideIcon;
   badge?: NavigationBadge;
-  permission?: Permission;
   /** Aparece direto na barra inferior do celular; o resto fica em "Mais". */
   primaryOnMobile?: boolean;
 }
@@ -51,7 +47,6 @@ const navigationSections: NavigationSection[] = [
         href: "/agenda/pendentes",
         icon: Inbox,
         badge: "portalPending",
-        permission: "appointments:manage",
         primaryOnMobile: true,
       },
     ],
@@ -63,17 +58,15 @@ const navigationSections: NavigationSection[] = [
         label: "Clientes",
         href: "/clientes",
         icon: UsersRound,
-        permission: "clients:view",
         primaryOnMobile: true,
       },
-      { label: "Serviços", href: "/servicos", icon: Scissors, permission: "catalog:view" },
+      { label: "Serviços", href: "/servicos", icon: Scissors },
       {
         label: "Profissionais",
         href: "/profissionais",
         icon: UserRound,
-        permission: "catalog:view",
       },
-      { label: "Bloqueios", href: "/bloqueios", icon: CalendarOff, permission: "blocks:view" },
+      { label: "Bloqueios", href: "/bloqueios", icon: CalendarOff },
     ],
   },
   {
@@ -83,25 +76,18 @@ const navigationSections: NavigationSection[] = [
         label: "Pagamentos",
         href: "/pagamentos",
         icon: Wallet,
-        permission: "payments:view",
       },
       {
         label: "Relatórios",
         href: "/relatorios",
         icon: BarChart3,
-        permission: "reports:view",
       },
     ],
   },
 ];
 
-export function getNavigationSections(role: UserRole): NavigationSection[] {
-  return navigationSections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) => !item.permission || can(role, item.permission)),
-    }))
-    .filter((section) => section.items.length > 0);
+export function getNavigationSections(): NavigationSection[] {
+  return navigationSections;
 }
 
 export const routeMetadata: Record<string, { title: string; section: string }> = {

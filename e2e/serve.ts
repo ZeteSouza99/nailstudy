@@ -4,7 +4,7 @@ import { rm } from "node:fs/promises";
 import { createDatabase } from "../src/db/client";
 import { seedDemoData } from "../src/db/demo-data";
 import { openMigrationConnection } from "../src/db/migration-utils";
-import { upsertUser } from "../src/db/user-admin";
+import { upsertAdmin } from "../src/db/user-admin";
 
 import { E2E_DATABASE_DIR, e2eEnv, E2E_PORT, e2eUsers } from "./env";
 import { seedCashierData } from "./payment-data";
@@ -24,9 +24,7 @@ async function prepareDatabase() {
   const { db, close } = await createDatabase(e2eEnv.DATABASE_URL);
   await seedDemoData(db);
   await seedCashierData(db);
-  for (const user of Object.values(e2eUsers)) {
-    await upsertUser(db, user);
-  }
+  await upsertAdmin(db, e2eUsers.admin);
   await close();
 }
 

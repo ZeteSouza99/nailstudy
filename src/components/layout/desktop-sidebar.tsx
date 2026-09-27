@@ -6,16 +6,12 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 import { cn } from "@/lib/formatters";
-import type { UserRole } from "@/types/domain";
-
 import { Brand } from "./brand";
 import { getNavigationSections, type NavigationCounters } from "./navigation";
 
 export function DesktopSidebar({
-  role,
   counters,
 }: {
-  role: UserRole;
   counters: NavigationCounters;
 }) {
   const pathname = usePathname();
@@ -27,7 +23,7 @@ export function DesktopSidebar({
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3" aria-label="Navegação principal">
-        {getNavigationSections(role).map((section) => (
+        {getNavigationSections().map((section) => (
           <div key={section.label} className="space-y-1">
             <p className="px-3 pb-1 text-[11px] font-semibold text-slate-400">{section.label}</p>
 

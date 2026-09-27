@@ -15,8 +15,7 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:baseline": "tsx src/db/baseline.ts",
     "db:seed": "tsx src/db/seed.ts",
-    "db:seed-admin": "tsx src/db/seed-admin.ts",
-    "db:create-user": "tsx src/db/create-user.ts"
+    "db:seed-admin": "tsx src/db/seed-admin.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

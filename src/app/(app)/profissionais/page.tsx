@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { ProfessionalsView } from "@/components/professionals/professionals-view";
 import { addDays, getCurrentTime, getTodayKey, getWeekDays } from "@/lib/date";
-import { can } from "@/lib/permissions";
 import {
   listAppointmentsInRange,
   listBlocksInRange,
@@ -16,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProfessionalsPage() {
-  const user = await requirePageUser("catalog:view");
+  await requirePageUser();
   const today = getTodayKey();
   const weekDates = getWeekDays(today);
   const firstDay = weekDates[0];
@@ -26,7 +25,7 @@ export default async function ProfessionalsPage() {
     listProfessionals(),
     listServices(),
     // Um mês à frente basta para mostrar o próximo horário de cada profissional.
-    listAppointmentsInRange(firstDay, addDays(today, 30), user),
+    listAppointmentsInRange(firstDay, addDays(today, 30)),
     listBlocksInRange(firstDay, lastDay),
   ]);
 
@@ -39,7 +38,7 @@ export default async function ProfessionalsPage() {
       weekDates={weekDates}
       today={today}
       currentTime={getCurrentTime()}
-      canManage={can(user.role, "catalog:manage")}
+      canManage
     />
   );
 }

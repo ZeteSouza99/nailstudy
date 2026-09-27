@@ -1,6 +1,6 @@
 import "server-only";
 
-import { sql } from "drizzle-orm";
+import { inArray, sql } from "drizzle-orm";
 
 import { db } from "@/db";
 import { bookingRateLimits } from "@/db/schema";
@@ -47,4 +47,10 @@ export async function enforceRateLimit(key: string, rule: RateLimitRule) {
       "Muitas tentativas em pouco tempo. Aguarde um instante e tente novamente.",
     );
   }
+}
+
+/** Uma autenticação válida encerra a janela de falhas da conta e do IP. */
+export async function resetRateLimits(keys: string[]) {
+  if (keys.length === 0) return;
+  await db.delete(bookingRateLimits).where(inArray(bookingRateLimits.key, keys));
 }

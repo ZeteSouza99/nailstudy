@@ -2,9 +2,8 @@ import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { appointmentEvents, appointments, professionalServices } from "@/db/schema";
-import { NOW, seedCatalog, seedClient, seedUsers } from "@/test/fixtures";
+import { NOW, seedCatalog, seedClient, seedAdmin } from "@/test/fixtures";
 import { getTestDatabase, resetDatabase } from "@/test/test-db";
-import type { SessionUser } from "@/types/domain";
 
 vi.mock("@/db", async () => {
   const { getTestDatabase: open } = await import("@/test/test-db");
@@ -39,7 +38,7 @@ const {
   updateProfessional,
 } = await import("./registry-service");
 
-let people: Awaited<ReturnType<typeof seedUsers>>;
+let admin: Awaited<ReturnType<typeof seedAdmin>>;
 
 function appointmentInput(overrides: Record<string, string> = {}) {
   return {
@@ -65,14 +64,14 @@ beforeEach(async () => {
   await resetDatabase();
   await seedCatalog();
   await seedClient();
-  people = await seedUsers();
+  admin = await seedAdmin();
   vi.mocked(sendNotification).mockClear();
 });
 
 describe("agendamentos da equipe", () => {
   it("deriva nome, preço e término do banco e registra quem criou", async () => {
     const { db } = await getTestDatabase();
-    const created = await createStaffAppointment(appointmentInput(), people.reception);
+    const created = await createStaffAppointment(appointmentInput(), admin);
 
     expect(created).toMatchObject({
       endTime: "11:00",
@@ -83,7 +82,7 @@ describe("agendamentos da equipe", () => {
     });
 
     const [row] = await db.select().from(appointments).where(eq(appointments.id, created.id));
-    expect(row).toMatchObject({ createdBy: "usr-rec", priceCents: 15000 });
+    expect(row).toMatchObject({ createdBy: "usr-admin", priceCents: 15000 });
     expect(row.accessTokenHash).toHaveLength(64);
     expect(sendNotification).toHaveBeenCalledWith(
       expect.objectContaining({ kind: "booking-created", to: "11977770001" }),
@@ -91,77 +90,75 @@ describe("agendamentos da equipe", () => {
   });
 
   it("recusa conflito e bloqueio de agenda", async () => {
-    await createStaffAppointment(appointmentInput(), people.reception);
+    await createStaffAppointment(appointmentInput(), admin);
     await seedClient("cli-2", "(11) 97777-0002", "Outra");
 
     await expect(
-      createStaffAppointment(appointmentInput({ clientId: "cli-2", startTime: "10:30" }), people.reception),
+      createStaffAppointment(appointmentInput({ clientId: "cli-2", startTime: "10:30" }), admin),
     ).rejects.toThrow(/profissional já possui um atendimento/);
 
     const { affectedAppointments } = await createBlock(
       { startDate: "2026-09-02", endDate: "2026-09-02", allDay: true, reason: "Feriado municipal" },
-      people.admin,
+      admin,
     );
     expect(affectedAppointments).toBe(1);
 
     await expect(
-      createStaffAppointment(appointmentInput({ clientId: "cli-2", startTime: "15:00" }), people.reception),
+      createStaffAppointment(appointmentInput({ clientId: "cli-2", startTime: "15:00" }), admin),
     ).rejects.toThrow(/Feriado municipal/);
   });
 
-  it("aplica o fluxo de status e as permissões de cada perfil", async () => {
-    const created = await createStaffAppointment(appointmentInput(), people.reception);
-    const change = (status: "confirmed" | "in-progress" | "completed" | "cancelled", actor: SessionUser) =>
-      changeAppointmentStatus({ id: created.id, status }, actor);
+  it("aplica o fluxo de status para a administradora", async () => {
+    const created = await createStaffAppointment(appointmentInput(), admin);
+    const change = (status: "confirmed" | "in-progress" | "completed" | "cancelled") =>
+      changeAppointmentStatus({ id: created.id, status }, admin);
 
-    await expect(change("confirmed", people.ana)).rejects.toThrow(/permissão/);
-    await expect(change("confirmed", people.reception)).resolves.toMatchObject({ status: "confirmed" });
+    await expect(change("confirmed")).resolves.toMatchObject({ status: "confirmed" });
     expect(sendNotification).toHaveBeenCalledWith(expect.objectContaining({ kind: "booking-confirmed" }));
 
-    await expect(change("in-progress", people.bia)).rejects.toThrow(/permissão/);
-    await expect(change("in-progress", people.ana)).resolves.toMatchObject({ status: "in-progress" });
-    await expect(change("completed", people.ana)).resolves.toMatchObject({ status: "completed" });
-    await expect(change("cancelled", people.admin)).rejects.toThrow(/Não é possível mudar/);
+    await expect(change("in-progress")).resolves.toMatchObject({ status: "in-progress" });
+    await expect(change("completed")).resolves.toMatchObject({ status: "completed" });
+    await expect(change("cancelled")).rejects.toThrow(/Não é possível mudar/);
 
     const { db } = await getTestDatabase();
     const events = await db
       .select({ kind: appointmentEvents.kind, actor: appointmentEvents.actorUserId })
       .from(appointmentEvents)
       .where(eq(appointmentEvents.appointmentId, created.id));
-    expect(events.map((event) => event.actor)).toEqual(["usr-rec", "usr-rec", "usr-ana", "usr-ana"]);
+    expect(events.map((event) => event.actor)).toEqual([
+      "usr-admin",
+      "usr-admin",
+      "usr-admin",
+      "usr-admin",
+    ]);
   });
 
   it("remarca mantendo o status e liberando o lembrete", async () => {
-    const created = await createStaffAppointment(appointmentInput(), people.reception);
-    await changeAppointmentStatus({ id: created.id, status: "confirmed" }, people.reception);
+    const created = await createStaffAppointment(appointmentInput(), admin);
+    await changeAppointmentStatus({ id: created.id, status: "confirmed" }, admin);
 
     const moved = await rescheduleStaffAppointment(
       { id: created.id, date: "2026-09-03", startTime: "14:00", professionalId: "pro-1" },
-      people.reception,
+      admin,
     );
     expect(moved).toMatchObject({ date: "2026-09-03", startTime: "14:00", status: "confirmed" });
   });
 
-  it("a profissional só enxerga os próprios atendimentos", async () => {
-    await createStaffAppointment(appointmentInput(), people.reception);
+  it("a administradora enxerga todos os atendimentos", async () => {
+    await createStaffAppointment(appointmentInput(), admin);
     await createStaffAppointment(
       appointmentInput({ serviceId: "srv-2", professionalId: "pro-2", startTime: "14:00" }),
-      people.reception,
+      admin,
     );
 
-    expect(await listAppointmentsInRange("2026-09-01", "2026-09-07", people.reception)).toHaveLength(2);
-    expect(
-      (await listAppointmentsInRange("2026-09-01", "2026-09-07", people.bia)).map(
-        (appointment) => appointment.professionalId,
-      ),
-    ).toEqual(["pro-2"]);
+    expect(await listAppointmentsInRange("2026-09-01", "2026-09-07")).toHaveLength(2);
   });
 });
 
 describe("cadastros", () => {
   it("troca os serviços da profissional e propaga o nome aos agendamentos futuros", async () => {
     const { db } = await getTestDatabase();
-    const created = await createStaffAppointment(appointmentInput(), people.reception);
+    const created = await createStaffAppointment(appointmentInput(), admin);
 
     await updateProfessional("pro-1", {
       name: "Ana Paula",
@@ -189,7 +186,7 @@ describe("cadastros", () => {
   });
 
   it("não exclui serviço ou profissional com histórico", async () => {
-    await createStaffAppointment(appointmentInput(), people.reception);
+    await createStaffAppointment(appointmentInput(), admin);
     await expect(deleteService("srv-1")).rejects.toThrow(/Desative-o/);
     await expect(deleteProfessional("pro-1")).rejects.toThrow(/Desative-a/);
     await expect(deleteService("srv-2")).resolves.toBeUndefined();
@@ -200,11 +197,11 @@ describe("consultas do painel", () => {
   it("busca clientes sem acento e por trecho do telefone, com indicadores derivados", async () => {
     const { db } = await getTestDatabase();
     await seedClient("cli-2", "(11) 94444-1234", "Mônica Araújo");
-    const done = await createStaffAppointment(appointmentInput({ clientId: "cli-2" }), people.reception);
+    const done = await createStaffAppointment(appointmentInput({ clientId: "cli-2" }), admin);
     await db.update(appointments).set({ status: "completed" }).where(eq(appointments.id, done.id));
     await createStaffAppointment(
       appointmentInput({ clientId: "cli-2", date: "2026-09-03" }),
-      people.reception,
+      admin,
     );
 
     const byName = await searchClients({ query: "monica", segment: "todas", page: 1, pageSize: 20, today: "2026-09-01" });
@@ -226,7 +223,7 @@ describe("consultas do painel", () => {
     expect(await getClientStats("2026-09-01")).toEqual({ total: 2, withUpcoming: 1, withoutVisits: 1 });
   });
 
-  it("conta pendências do portal só para quem pode confirmá-las", async () => {
+  it("conta pendências do portal para a administradora", async () => {
     await createPublicBooking(
       {
         firstName: "Maria",
@@ -241,13 +238,9 @@ describe("consultas do painel", () => {
     );
 
     expect(await listPendingPortalAppointments("2026-09-01")).toHaveLength(1);
-    await expect(getNavigationCounters(people.reception, "2026-09-01")).resolves.toEqual({
+    await expect(getNavigationCounters("2026-09-01")).resolves.toEqual({
       todayActive: 0,
       portalPending: 1,
-    });
-    await expect(getNavigationCounters(people.ana, "2026-09-01")).resolves.toEqual({
-      todayActive: 0,
-      portalPending: 0,
     });
   });
 });

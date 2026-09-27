@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { AgendaView } from "@/components/agenda/agenda-view";
 import { getTodayKey, getWeekDays } from "@/lib/date";
-import { can } from "@/lib/permissions";
 import { getWorkDayLabel } from "@/lib/scheduling";
 import {
   listAppointmentsInRange,
@@ -21,7 +20,7 @@ interface AgendaPageProps {
 }
 
 export default async function AgendaPage({ searchParams }: AgendaPageProps) {
-  const user = await requirePageUser();
+  await requirePageUser();
   const params = await searchParams;
   const today = getTodayKey();
   const selectedDate =
@@ -32,7 +31,7 @@ export default async function AgendaPage({ searchParams }: AgendaPageProps) {
   const lastDay = dates[dates.length - 1];
 
   const [appointments, professionals, services, blocks] = await Promise.all([
-    listAppointmentsInRange(firstDay, lastDay, user),
+    listAppointmentsInRange(firstDay, lastDay),
     listProfessionals(),
     listServices(),
     listBlocksInRange(firstDay, lastDay),
@@ -47,8 +46,7 @@ export default async function AgendaPage({ searchParams }: AgendaPageProps) {
       today={today}
       selectedDate={selectedDate}
       view={view}
-      initiallyOpen={params.novo === "1" && can(user.role, "appointments:create")}
-      viewer={{ role: user.role, professionalId: user.professionalId }}
+      initiallyOpen={params.novo === "1"}
     />
   );
 }

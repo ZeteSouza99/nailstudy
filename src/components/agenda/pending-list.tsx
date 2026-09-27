@@ -46,7 +46,7 @@ export function PendingList({ appointments }: { appointments: Appointment[] }) {
       <PageHeader
         eyebrow="Atendimentos"
         title="Pendentes do portal"
-        description="Pedidos feitos pelas clientes online que aguardam a confirmação da recepção."
+        description="Pedidos feitos pelas clientes online que aguardam a confirmação do administrador."
       />
 
       {feedback ? (

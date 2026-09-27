@@ -8,7 +8,7 @@ import Credentials from "next-auth/providers/credentials";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { UserError } from "@/server/errors";
-import { enforceRateLimit, rateLimits } from "@/server/rate-limit";
+import { enforceRateLimit, rateLimits, resetRateLimits } from "@/server/rate-limit";
 
 import { authConfig } from "./auth.config";
 
@@ -39,9 +39,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const ip =
           request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
+        const ipRateKey = `login:ip:${ip}`;
+        const emailRateKey = `login:email:${email}`;
+
         try {
-          await enforceRateLimit(`login:ip:${ip}`, rateLimits.loginIp);
-          await enforceRateLimit(`login:email:${email}`, rateLimits.loginEmail);
+          await enforceRateLimit(ipRateKey, rateLimits.loginIp);
+          await enforceRateLimit(emailRateKey, rateLimits.loginEmail);
         } catch (error) {
           if (error instanceof UserError) throw new RateLimitedSignin();
           throw error;
@@ -59,6 +62,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
+        await resetRateLimits([ipRateKey, emailRateKey]);
         return { id: user.id, name: user.name, email: user.email };
       },
     }),

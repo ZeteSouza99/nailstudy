@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import type { UserRole } from "@/types/domain";
-
 import { DesktopSidebar } from "./desktop-sidebar";
 import { MobileNavigation } from "./mobile-navigation";
 import type { NavigationCounters } from "./navigation";
@@ -10,13 +8,11 @@ import { Topbar } from "./topbar";
 export function AppShell({
   children,
   user,
-  role,
   today,
   counters,
 }: {
   children: ReactNode;
-  user: { name: string; role: string };
-  role: UserRole;
+  user: { name: string };
   today: string;
   counters: NavigationCounters;
 }) {
@@ -28,7 +24,7 @@ export function AppShell({
       >
         Pular para o conteúdo
       </a>
-      <DesktopSidebar role={role} counters={counters} />
+      <DesktopSidebar counters={counters} />
       <div className="min-h-screen lg:pl-66">
         <Topbar user={user} today={today} />
         <main
@@ -38,7 +34,7 @@ export function AppShell({
           {children}
         </main>
       </div>
-      <MobileNavigation role={role} counters={counters} />
+      <MobileNavigation counters={counters} />
     </div>
   );
 }

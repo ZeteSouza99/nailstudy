@@ -1,24 +1,20 @@
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import type { UserRole } from "@/types/domain";
-
 import type { Database } from "./client";
-import { professionals, users } from "./schema";
+import { users } from "./schema";
 
 export const PASSWORD_MIN_LENGTH = 10;
 export const BCRYPT_COST = 12;
 
-interface UserInput {
+interface AdminInput {
   email: string;
   name: string;
   password: string;
-  role: UserRole;
-  professionalId?: string | null;
 }
 
-/** Cria ou atualiza (pelo e-mail) um usuário da equipe. */
-export async function upsertUser(db: Database, input: UserInput) {
+/** Cria a conta administrativa ou atualiza a única conta já existente. */
+export async function upsertAdmin(db: Database, input: AdminInput) {
   const email = input.email.trim().toLowerCase();
   const name = input.name.trim();
 
@@ -32,39 +28,21 @@ export async function upsertUser(db: Database, input: UserInput) {
     throw new Error(`A senha precisa ter ao menos ${PASSWORD_MIN_LENGTH} caracteres.`);
   }
 
-  const professionalId = input.role === "professional" ? input.professionalId ?? null : null;
-  if (input.role === "professional") {
-    if (!professionalId) {
-      throw new Error("Usuários com perfil profissional precisam de --professional-id.");
-    }
-    const [professional] = await db
-      .select({ id: professionals.id })
-      .from(professionals)
-      .where(eq(professionals.id, professionalId))
-      .limit(1);
-    if (!professional) {
-      throw new Error(`Profissional ${professionalId} não encontrada.`);
-    }
-  }
-
   const password = await bcrypt.hash(input.password, BCRYPT_COST);
   const [existing] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, email))
     .limit(1);
 
   if (existing) {
     await db
       .update(users)
-      .set({ name, password, role: input.role, professionalId })
+      .set({ name, email, password })
       .where(eq(users.id, existing.id));
     return { id: existing.id, created: false };
   }
 
-  const id = `usr-${crypto.randomUUID()}`;
-  await db
-    .insert(users)
-    .values({ id, name, email, password, role: input.role, professionalId });
+  const id = "usr-admin";
+  await db.insert(users).values({ id, name, email, password });
   return { id, created: true };
 }

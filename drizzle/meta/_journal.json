@@ -36,6 +36,20 @@
       "when": 1790481744940,
       "tag": "0004_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790530946969,
+      "tag": "0005_single_admin",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790530989101,
+      "tag": "0006_single_admin_constraint",
+      "breakpoints": true
     }
   ]
 }

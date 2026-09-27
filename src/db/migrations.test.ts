@@ -51,7 +51,8 @@ async function createLegacyDatabase() {
        'pro-1', 'Ana', 'confirmed', 150.50, 'staff', null);
 
     insert into users (id, name, email, password, role) values
-      ('usr-admin', 'Admin', 'admin@clinica.test', 'hash', 'admin');
+      ('usr-admin', 'Admin', 'admin@clinica.test', 'hash', 'admin'),
+      ('usr-rec', 'Recepção', 'recepcao@clinica.test', 'hash', 'receptionist');
   `);
 
   return opened;
@@ -120,11 +121,31 @@ describe("migrations", () => {
     expect(legacyColumns).toHaveLength(0);
   });
 
-  it("registra o histórico inicial e converte o perfil para enum", async () => {
+  it("registra o histórico inicial e preserva somente a administradora", async () => {
     expect(await rows(legacy, "select count(*)::int as total from appointment_events")).toEqual([
       { total: 2 },
     ]);
-    expect(await rows(legacy, "select role::text as role from users")).toEqual([{ role: "admin" }]);
+    expect(await rows(legacy, "select id, singleton_key from users")).toEqual([
+      { id: "usr-admin", singleton_key: 1 },
+    ]);
+    expect(
+      await rows(
+        legacy,
+        `select column_name from information_schema.columns
+         where table_name = 'users' and column_name in ('role', 'professional_id')`,
+      ),
+    ).toHaveLength(0);
+  });
+
+  it("recusa uma segunda conta administrativa no banco", async () => {
+    const error = await legacy.client
+      .exec(
+        `insert into users (id, name, email, password)
+         values ('usr-outro', 'Outro', 'outro@clinica.test', 'hash')`,
+      )
+      .catch((caught: unknown) => caught);
+
+    expect(getPgError(error)?.code).toBe("23505");
   });
 
   it("recusa no banco atendimentos sobrepostos da mesma profissional", async () => {

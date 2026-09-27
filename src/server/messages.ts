@@ -40,7 +40,7 @@ function when(appointment: AppointmentSummary) {
 
 export const messages = {
   requested: (appointment: AppointmentSummary, link: string) =>
-    `Olá, ${firstName(appointment.clientName)}! Recebemos seu pedido de ${appointment.serviceName} com ${appointment.professionalName}, ${when(appointment)}. A recepção vai confirmar em breve. Acompanhe, remarque ou cancele: ${link}`,
+    `Olá, ${firstName(appointment.clientName)}! Recebemos seu pedido de ${appointment.serviceName} com ${appointment.professionalName}, ${when(appointment)}. O estúdio vai confirmar em breve. Acompanhe, remarque ou cancele: ${link}`,
   created: (appointment: AppointmentSummary, link: string) =>
     `Olá, ${firstName(appointment.clientName)}! Seu horário de ${appointment.serviceName} com ${appointment.professionalName} ficou para ${when(appointment)}. Detalhes: ${link}`,
   confirmed: (appointment: AppointmentSummary, link: string) =>

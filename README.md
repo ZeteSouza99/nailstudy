@@ -4,7 +4,7 @@ Sistema de agendamento e gestão para manicures, pedicures e nail designers.
 
 O projeto possui duas áreas:
 
-- **Painel da equipe:** visão geral, agenda diária e semanal, pedidos do portal, clientes, catálogo de serviços, profissionais, bloqueios, pagamentos e relatórios.
+- **Painel administrativo:** visão geral, agenda diária e semanal, pedidos do portal, clientes, catálogo de serviços, profissionais, bloqueios, pagamentos e relatórios.
 - **Portal da cliente:** escolha do serviço e da profissional, consulta de horários livres, agendamento, remarcação e cancelamento por link seguro.
 
 O catálogo de demonstração inclui manicure, pedicure, esmaltação em gel, alongamento em fibra, manutenção, reparo, spa dos pés e nail art. O sistema também oferece tema claro e escuro com preferência salva no navegador.
@@ -59,13 +59,9 @@ npm run db:seed-admin
 
 O seed é idempotente: registros com os mesmos identificadores não são duplicados.
 
-## Perfis
+## Acesso administrativo
 
-| Perfil | Acesso |
-| --- | --- |
-| `admin` | Todas as telas, cadastros, pagamentos e relatórios |
-| `receptionist` | Agenda, clientes, bloqueios e caixa; catálogo somente para leitura |
-| `professional` | A própria agenda e os próprios atendimentos |
+O sistema possui uma única conta de administrador, com acesso a todas as telas. Profissionais são cadastros operacionais da agenda e não possuem login próprio. Execute `db:seed-admin` novamente para atualizar nome, e-mail ou senha do administrador existente.
 
 ## Comandos
 
@@ -79,7 +75,6 @@ npm run test:e2e        # testes completos no navegador
 npm run db:migrate      # aplica migrations
 npm run db:seed         # catálogo e dados de demonstração
 npm run db:seed-admin   # cria ou atualiza a administradora
-npm run db:create-user  # cria outros usuários
 ```
 
 ## Regras da agenda

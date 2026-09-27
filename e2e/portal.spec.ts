@@ -5,7 +5,7 @@ import { bookThroughPortal, pickFirstSlot } from "./helpers";
 test.describe("portal da cliente", () => {
   test("agenda, remarca e cancela pelo link com token", async ({ page }) => {
     const time = await bookThroughPortal(page, "(11) 95555-1001");
-    await expect(page.getByText("Aguardando confirmação da recepção.")).toBeVisible();
+    await expect(page.getByText("Aguardando confirmação do estúdio.")).toBeVisible();
     await expect(page.getByText(time).first()).toBeVisible();
 
     await page.getByRole("link", { name: /Abrir meu agendamento/ }).click();

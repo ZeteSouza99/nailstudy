@@ -7,7 +7,6 @@ import { atomic, db } from "@/db";
 import { appointmentEvents, appointments, clients } from "@/db/schema";
 import { isActiveAppointment } from "@/lib/booking";
 import { appointmentStatusConfig } from "@/lib/domain-config";
-import { canChangeAppointmentStatus } from "@/lib/permissions";
 import { canTransitionStatus } from "@/lib/scheduling";
 import type {
   appointmentSchema,
@@ -121,10 +120,6 @@ export async function changeAppointmentStatus(
     throw new UserError(
       `Não é possível mudar de "${appointmentStatusConfig[appointment.status].label}" para "${appointmentStatusConfig[input.status].label}".`,
     );
-  }
-
-  if (!canChangeAppointmentStatus(actor, appointment, input.status)) {
-    throw new UserError("Você não tem permissão para esta ação.");
   }
 
   await atomic([

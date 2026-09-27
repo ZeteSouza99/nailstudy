@@ -15,19 +15,5 @@ export const e2eUsers = {
     email: "admin@e2e.test",
     name: "Admin E2E",
     password: "senha-admin-e2e",
-    role: "admin" as const,
-  },
-  reception: {
-    email: "recepcao@e2e.test",
-    name: "Recepção E2E",
-    password: "senha-recepcao-e2e",
-    role: "receptionist" as const,
-  },
-  professional: {
-    email: "ana@e2e.test",
-    name: "Amanda Souza",
-    password: "senha-profissional-e2e",
-    role: "professional" as const,
-    professionalId: "pro-001",
   },
 };

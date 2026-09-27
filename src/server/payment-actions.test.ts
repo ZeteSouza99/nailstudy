@@ -43,7 +43,7 @@ beforeEach(async () => {
 });
 
 describe("ações do caixa", () => {
-  it.each([null, "usr-ana", "usuario-removido"])("bloqueia leitura e alterações para sessão %s", async (userId) => {
+  it.each([null, "usuario-removido"])("bloqueia leitura e alterações para sessão %s", async (userId) => {
     session.userId = userId;
     const results = [
       await listBillableAppointmentsAction(),
@@ -53,13 +53,13 @@ describe("ações do caixa", () => {
     ];
     for (const result of results) {
       expect(result.ok).toBe(false);
-      if (!result.ok) expect(result.error).toMatch(/permissão|Sessão expirada/);
+      if (!result.ok) expect(result.error).toMatch(/Sessão expirada/);
     }
     expect(await listPayments("2026-09-01", "2026-09-30")).toEqual([]);
   });
 
-  it.each(["usr-admin", "usr-rec"])("permite consultar, cobrar, estornar e excluir para %s", async (userId) => {
-    session.userId = userId;
+  it("permite à administradora consultar, cobrar, estornar e excluir", async () => {
+    session.userId = "usr-admin";
     const available = await listBillableAppointmentsAction();
     expect(available.ok && available.data.map((item) => item.id)).toEqual(["apt-1"]);
     const result = await createPaymentAction(input);
@@ -74,7 +74,7 @@ describe("ações do caixa", () => {
   });
 
   it("retorna erro por campo e não grava recibo com dados inválidos", async () => {
-    session.userId = "usr-rec";
+    session.userId = "usr-admin";
     expect(await createPaymentAction({ ...input, paidAt: "2026-09-02" })).toMatchObject({
       ok: false, fieldErrors: { paidAt: expect.any(String) },
     });

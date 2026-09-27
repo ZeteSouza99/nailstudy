@@ -19,7 +19,7 @@ export default async function AgendarPage() {
         <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-50">Agendamento indisponível</h1>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
           No momento não há serviços abertos para agendamento online. Entre em contato com a
-          recepção.
+          equipe do estúdio.
         </p>
       </div>
     );

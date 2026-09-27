@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function PendingPage() {
-  await requirePageUser("appointments:manage");
+  await requirePageUser();
   const appointments = await listPendingPortalAppointments(getTodayKey());
 
   return <PendingList appointments={appointments} />;

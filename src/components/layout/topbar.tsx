@@ -20,7 +20,7 @@ export function Topbar({
   user,
   today,
 }: {
-  user: { name: string; role: string };
+  user: { name: string };
   today: string;
 }) {
   const pathname = usePathname();
@@ -59,7 +59,7 @@ export function Topbar({
             <Avatar name={user.name} color="#0f766e" size="sm" decorative />
             <span className="hidden sm:block">
               <span className="block text-xs font-bold text-slate-800 dark:text-slate-100">{user.name}</span>
-              <span className="block text-[11px] text-slate-500 dark:text-slate-400">{user.role}</span>
+              <span className="block text-[11px] text-slate-500 dark:text-slate-400">Administrador</span>
             </span>
           </div>
         </div>

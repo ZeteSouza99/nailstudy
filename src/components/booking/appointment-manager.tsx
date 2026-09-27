@@ -99,7 +99,7 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
       setError(result.error);
       return;
     }
-    setFeedback("Agendamento remarcado com sucesso. Ele volta a aguardar a confirmação da recepção.");
+    setFeedback("Agendamento remarcado com sucesso. Ele volta a aguardar a confirmação do estúdio.");
     setMode("view");
     router.refresh();
   }
@@ -165,7 +165,7 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
         ) : appointment.status === "scheduled" || appointment.status === "confirmed" ? (
           <p className="mt-5 rounded-xl bg-slate-50 dark:bg-slate-950 p-3 text-xs text-slate-600 dark:text-slate-300">
             Alterações online só são possíveis com no mínimo {MIN_CANCEL_LEAD_TIME_MINUTES} minutos de
-            antecedência. Para mudar algo agora, fale com a recepção.
+            antecedência. Para mudar algo agora, fale com o estúdio.
           </p>
         ) : null}
       </section>

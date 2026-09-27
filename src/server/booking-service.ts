@@ -138,7 +138,7 @@ export async function createPublicBooking(
 
     if ((active?.value ?? 0) >= MAX_ACTIVE_APPOINTMENTS_PER_CLIENT) {
       throw new UserError(
-        "Você já possui o limite de agendamentos futuros. Entre em contato com a recepção.",
+        "Você já possui o limite de agendamentos futuros. Entre em contato com o estúdio.",
       );
     }
   }
@@ -166,7 +166,7 @@ export async function createPublicBooking(
     serviceName: slot.service.name,
     professionalId: slot.professional.id,
     professionalName: slot.professional.name,
-    // Agendamentos do portal aguardam confirmação da recepção.
+    // Agendamentos do portal aguardam confirmação do administrador.
     status: "scheduled",
     price: slot.service.price,
     notes: input.notes,
@@ -227,7 +227,7 @@ async function loadModifiableAppointment(token: string) {
 
   if (!canClientModify(appointment)) {
     throw new UserError(
-      `Alterações online só são permitidas em agendamentos ativos, com no mínimo ${MIN_CANCEL_LEAD_TIME_MINUTES} minutos de antecedência. Entre em contato com a recepção.`,
+      `Alterações online só são permitidas em agendamentos ativos, com no mínimo ${MIN_CANCEL_LEAD_TIME_MINUTES} minutos de antecedência. Entre em contato com o estúdio.`,
     );
   }
 
@@ -286,7 +286,7 @@ export async function reschedulePublicBooking(
         bufferMinutes: slot.service.bufferMinutes,
         professionalId: slot.professional.id,
         professionalName: slot.professional.name,
-        // Remarcação pelo portal volta a aguardar a recepção.
+        // Remarcação pelo portal volta a aguardar o administrador.
         status: "scheduled",
         reminderSentAt: null,
         updatedAt: new Date(),

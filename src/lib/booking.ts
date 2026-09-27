@@ -25,7 +25,7 @@ export const MIN_LEAD_TIME_MINUTES = 60;
 export const MAX_ADVANCE_DAYS = 60;
 
 /**
- * Antecedência mínima para cancelar ou remarcar sem falar com a recepção.
+ * Antecedência mínima para cancelar ou remarcar sem falar com o estúdio.
  *
  * Precisa ser menor ou igual à antecedência de criação: se fosse maior,
  * quem agendasse dentro dessa diferença ficaria sem poder desmarcar pelo

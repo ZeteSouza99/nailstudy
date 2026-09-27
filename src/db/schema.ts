@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
   index,
   integer,
@@ -24,12 +25,6 @@ export const appointmentStatusEnum = pgEnum("appointment_status", [
 export const serviceStatusEnum = pgEnum("service_status", [
   "active",
   "inactive",
-]);
-
-export const userRoleEnum = pgEnum("user_role", [
-  "admin",
-  "receptionist",
-  "professional",
 ]);
 
 export const appointmentSourceEnum = pgEnum("appointment_source", [
@@ -121,17 +116,19 @@ export const professionalServices = pgTable(
   ],
 );
 
-export const users = pgTable("users", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  password: text("password").notNull(),
-  role: userRoleEnum("role").notNull().default("admin"),
-  professionalId: text("professional_id").references(() => professionals.id, {
-    onDelete: "set null",
-  }),
-  createdAt: date("created_at").notNull().defaultNow(),
-});
+export const users = pgTable(
+  "users",
+  {
+    id: text("id").primaryKey(),
+    /** Chave constante e única: o sistema aceita exatamente uma conta administrativa. */
+    singletonKey: integer("singleton_key").notNull().default(1).unique(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique(),
+    password: text("password").notNull(),
+    createdAt: date("created_at").notNull().defaultNow(),
+  },
+  (table) => [check("users_singleton_key_check", sql`${table.singletonKey} = 1`)],
+);
 
 export const appointments = pgTable(
   "appointments",

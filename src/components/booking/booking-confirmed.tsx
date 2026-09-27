@@ -43,7 +43,7 @@ export function BookingConfirmed({ confirmation }: BookingConfirmedProps) {
             Agendamento registrado
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            Aguardando confirmação da recepção.
+            Aguardando confirmação do estúdio.
           </p>
         </div>
       </div>

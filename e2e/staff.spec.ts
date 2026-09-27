@@ -3,19 +3,19 @@ import { expect, test } from "@playwright/test";
 import { e2eUsers } from "./env";
 import { bookThroughPortal, login } from "./helpers";
 
-test.describe("painel da equipe", () => {
+test.describe("painel administrativo", () => {
   test("não segue callbackUrl para outro domínio", async ({ page }) => {
     await login(page, e2eUsers.admin, "//evil.example");
     await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
     expect(new URL(page.url()).pathname).toBe("/");
   });
 
-  test("recepção confirma o pedido feito pelo portal", async ({ page, browser }) => {
+  test("administradora confirma o pedido feito pelo portal", async ({ page, browser }) => {
     const portal = await browser.newPage();
     await bookThroughPortal(portal, "(11) 95555-2002");
     await portal.close();
 
-    await login(page, e2eUsers.reception, "/agenda/pendentes");
+    await login(page, e2eUsers.admin, "/agenda/pendentes");
     await expect(page.getByRole("heading", { name: "Pendentes do portal" })).toBeVisible();
 
     const pending = page.getByRole("listitem").filter({ hasText: "Teste Portal" }).first();
@@ -23,24 +23,12 @@ test.describe("painel da equipe", () => {
     await expect(page.getByText(/confirmado\. A cliente foi avisada/)).toBeVisible();
   });
 
-  test("recepção vê o catálogo mas não o edita", async ({ page }) => {
-    await login(page, e2eUsers.reception);
+  test("administradora acessa e edita o catálogo completo", async ({ page }) => {
+    await login(page, e2eUsers.admin);
     await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
     await page.goto("/servicos");
     await expect(page.getByRole("heading", { name: "Serviços" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Novo serviço" })).toHaveCount(0);
-  });
-
-  test("profissional vê só a própria agenda e não os cadastros", async ({ page }) => {
-    await login(page, e2eUsers.professional);
-    await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
-
-    await page.goto("/agenda");
-    await expect(page.getByRole("heading", { name: "Minha agenda" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Novo agendamento" })).toHaveCount(0);
-
-    await page.goto("/clientes");
-    await expect(page.getByRole("heading", { name: "Visão geral do estúdio" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Novo serviço" })).toBeVisible();
   });
 
   test("novo agendamento mantém os dados quando o servidor recusa o horário", async ({ page }) => {

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { PaymentsView } from "@/components/payments/payments-view";
 import { getTodayKey } from "@/lib/date";
-import { can } from "@/lib/permissions";
 import { listBillableAppointments, listPayments } from "@/server/payment-queries";
 import { requirePageUser } from "@/server/session";
 
@@ -18,7 +17,7 @@ const isDateKey = (value: unknown): value is string =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 
 export default async function PaymentsPage({ searchParams }: PaymentsPageProps) {
-  const user = await requirePageUser("payments:view");
+  await requirePageUser();
   const params = await searchParams;
   const today = getTodayKey();
   const monthStart = `${today.slice(0, 7)}-01`;
@@ -37,7 +36,7 @@ export default async function PaymentsPage({ searchParams }: PaymentsPageProps) 
       from={from}
       to={to}
       today={today}
-      canManage={can(user.role, "payments:manage")}
+      canManage
       openNew={params.novo === "1"}
     />
   );

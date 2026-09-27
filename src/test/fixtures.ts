@@ -68,16 +68,17 @@ export async function seedClient(id = "cli-1", phone = "(11) 97777-0001", name =
   return id;
 }
 
-export async function seedUsers(): Promise<Record<"admin" | "reception" | "ana" | "bia", SessionUser>> {
+export async function seedAdmin(): Promise<SessionUser> {
   const { db } = await getTestDatabase();
-  const people = {
-    admin: { id: "usr-admin", name: "Admin", email: "admin@clinica.test", role: "admin" as const, professionalId: null },
-    reception: { id: "usr-rec", name: "Recepção", email: "rec@clinica.test", role: "receptionist" as const, professionalId: null },
-    ana: { id: "usr-ana", name: "Ana", email: "ana.user@clinica.test", role: "professional" as const, professionalId: "pro-1" },
-    bia: { id: "usr-bia", name: "Bia", email: "bia.user@clinica.test", role: "professional" as const, professionalId: "pro-2" },
-  };
-  await db.insert(users).values(Object.values(people).map((user) => ({ ...user, password: "hash" })));
-  return people;
+  const admin = { id: "usr-admin", name: "Admin", email: "admin@clinica.test" };
+  await db.insert(users).values({ ...admin, password: "hash" });
+  return admin;
+}
+
+/** Compatibilidade para cenários financeiros: todos os atores apontam para a única conta. */
+export async function seedUsers() {
+  const admin = await seedAdmin();
+  return { admin, reception: admin, ana: admin, bia: admin };
 }
 
 export async function getClientByPhone(phoneDigits: string) {

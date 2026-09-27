@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD CONSTRAINT "users_singleton_key_check" CHECK ("users"."singleton_key" = 1);
