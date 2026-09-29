@@ -89,12 +89,12 @@ export function ServiceForm({ service, categories, onCancel, onDone }: ServiceFo
             name="color"
             type="color"
             className="form-control w-20 cursor-pointer p-1"
-            defaultValue={service?.color ?? "#0f766e"}
+            defaultValue={service?.color ?? "#83423e"}
           />
         </FormField>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <FormField id="service-duration" label="Duração (min)" error={errors.durationMinutes}>
           <input
             {...fieldA11y("service-duration", errors.durationMinutes)}
@@ -148,7 +148,7 @@ export function ServiceForm({ service, categories, onCancel, onDone }: ServiceFo
         </select>
       </FormField>
 
-      <div className="flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="flex flex-col-reverse gap-2 border-t sm:flex-row sm:items-center sm:justify-between border-ink-100 dark:border-ink-800 pt-4">
         {service ? (
           <Button variant="ghost" size="sm" onClick={() => setIsDeleting(true)}>
             <Trash2 className="size-4" aria-hidden="true" />
@@ -157,7 +157,7 @@ export function ServiceForm({ service, categories, onCancel, onDone }: ServiceFo
         ) : (
           <span />
         )}
-        <div className="flex gap-2">
+        <div className="form-actions">
           <Button variant="secondary" onClick={onCancel}>
             Cancelar
           </Button>

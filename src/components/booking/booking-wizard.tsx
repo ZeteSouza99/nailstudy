@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarDays, Check, ChevronLeft, Clock, Users } from "lucide-react";
+import { CalendarDays, Check, ChevronLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
@@ -15,19 +15,18 @@ import type { BookingCatalog } from "@/server/portal-queries";
 import { BookingConfirmed } from "./booking-confirmed";
 import { SlotPicker, type SlotOption } from "./slot-picker";
 
-type Step = "service" | "professional" | "slot" | "identify" | "done";
+type Step = "service" | "slot" | "identify" | "done";
 
-const stepOrder: Step[] = ["service", "professional", "slot", "identify"];
+const stepOrder: Step[] = ["service", "slot", "identify"];
 
 const stepLabels: Record<Step, string> = {
   service: "Serviço",
-  professional: "Profissional",
   slot: "Data e horário",
   identify: "Seus dados",
   done: "Confirmado",
 };
 
-const ANY_PROFESSIONAL = "any";
+
 
 interface BookingWizardProps {
   catalog: BookingCatalog;
@@ -36,7 +35,6 @@ interface BookingWizardProps {
 export function BookingWizard({ catalog }: BookingWizardProps) {
   const [step, setStep] = useState<Step>("service");
   const [serviceId, setServiceId] = useState("");
-  const [professionalId, setProfessionalId] = useState(ANY_PROFESSIONAL);
   const [date, setDate] = useState(catalog.today);
   const [slots, setSlots] = useState<SlotOption[]>([]);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
@@ -54,28 +52,16 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
     [catalog.services, serviceId],
   );
 
-  const eligibleProfessionals = useMemo(
-    () =>
-      catalog.professionals.filter((professional) =>
-        serviceId ? professional.serviceIds.includes(serviceId) : false,
-      ),
-    [catalog.professionals, serviceId],
-  );
-
   const loadSlots = useCallback(
-    async (nextDate: string, nextProfessionalId: string) => {
-      if (!serviceId) return;
+    async (nextDate: string, selectedServiceId = serviceId) => {
+      if (!selectedServiceId) return;
       setIsLoadingSlots(true);
       setError("");
       setSelectedSlot(null);
 
       const result = await listAvailabilityAction({
-        serviceId,
+        serviceId: selectedServiceId,
         date: nextDate,
-        professionalId:
-          nextProfessionalId === ANY_PROFESSIONAL
-            ? undefined
-            : nextProfessionalId,
       });
 
       if (result.ok) {
@@ -89,15 +75,9 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
     [serviceId],
   );
 
-  function goToSlotStep(nextProfessionalId: string) {
-    setProfessionalId(nextProfessionalId);
-    setStep("slot");
-    void loadSlots(date, nextProfessionalId);
-  }
-
   function handleDateChange(nextDate: string) {
     setDate(nextDate);
-    void loadSlots(nextDate, professionalId);
+    void loadSlots(nextDate);
   }
 
   function goBack() {
@@ -154,18 +134,18 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-slate-950 dark:text-slate-50 sm:text-2xl">
+        <h1 className="text-xl font-bold text-ink-950 dark:text-ink-50 sm:text-2xl">
           Agendar horário
         </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-          Em poucos passos você garante seu atendimento.
+        <p className="mt-1 text-sm text-ink-600 dark:text-ink-300">
+          Agende seu atendimento com Erika Queiroz.
           {catalog.recoveryAvailable ? (
             <>
               {" "}
               Já agendou?{" "}
               <Link
                 href="/meu-agendamento"
-                className="font-semibold text-teal-700 dark:text-teal-300 hover:text-teal-900 dark:hover:text-teal-200"
+                className="font-semibold text-brand-700 dark:text-brand-300 hover:text-brand-900 dark:hover:text-brand-200"
               >
                 Encontre seu agendamento
               </Link>
@@ -185,10 +165,10 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
                 aria-current={isCurrent ? "step" : undefined}
                 className={`flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                   isDone
-                    ? "bg-teal-700 text-white"
+                    ? "bg-brand-700 text-white"
                     : isCurrent
-                      ? "bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 ring-2 ring-teal-600"
-                      : "bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400"
+                      ? "bg-brand-100 dark:bg-brand-900 text-brand-800 dark:text-brand-200 ring-2 ring-brand-600"
+                      : "bg-ink-200 dark:bg-ink-700 text-ink-500 dark:text-ink-400"
                 }`}
               >
                 {isDone ? (
@@ -199,13 +179,13 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
               </span>
               <span
                 className={`hidden truncate text-xs font-medium sm:block ${
-                  isCurrent ? "text-slate-900 dark:text-slate-50" : "text-slate-500 dark:text-slate-400"
+                  isCurrent ? "text-ink-900 dark:text-ink-50" : "text-ink-500 dark:text-ink-400"
                 }`}
               >
                 {stepLabels[item]}
               </span>
               {index < stepOrder.length - 1 ? (
-                <span className="h-px flex-1 bg-slate-200 dark:bg-slate-700" aria-hidden="true" />
+                <span className="h-px flex-1 bg-ink-200 dark:bg-ink-700" aria-hidden="true" />
               ) : null}
             </li>
           );
@@ -223,7 +203,7 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
 
       {step === "service" ? (
         <section className="surface-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-ink-50">
             Qual serviço você deseja?
           </h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -233,10 +213,10 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
                 type="button"
                 onClick={() => {
                   setServiceId(item.id);
-                  setProfessionalId(ANY_PROFESSIONAL);
-                  setStep("professional");
+                  setStep("slot");
+                  void loadSlots(date, item.id);
                 }}
-                className="flex items-start gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-left transition-colors hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                className="flex items-start gap-3 rounded-xl border border-ink-200 dark:border-ink-700 p-3 text-left transition-colors hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
               >
                 <span
                   className="mt-1 size-2.5 shrink-0 rounded-full"
@@ -244,10 +224,10 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
                   aria-hidden="true"
                 />
                 <span className="min-w-0">
-                  <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
+                  <span className="block truncate text-sm font-semibold text-ink-900 dark:text-ink-50">
                     {item.name}
                   </span>
-                  <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">
+                  <span className="mt-0.5 block text-xs text-ink-500 dark:text-ink-400">
                     {formatDuration(item.durationMinutes)} ·{" "}
                     {formatCurrency(item.price)}
                   </span>
@@ -258,71 +238,9 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
         </section>
       ) : null}
 
-      {step === "professional" ? (
-        <section className="surface-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-            Com quem você quer ser atendida?
-          </h2>
-          {eligibleProfessionals.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
-              Nenhuma profissional disponível para este serviço no momento.
-            </p>
-          ) : (
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => goToSlotStep(ANY_PROFESSIONAL)}
-                className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-left transition-colors hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
-              >
-                <Users
-                  className="size-4 shrink-0 text-slate-500 dark:text-slate-400"
-                  aria-hidden="true"
-                />
-                <span>
-                  <span className="block text-sm font-semibold text-slate-900 dark:text-slate-50">
-                    Sem preferência
-                  </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">
-                    Mais horários disponíveis
-                  </span>
-                </span>
-              </button>
-              {eligibleProfessionals.map((professional) => (
-                <button
-                  key={professional.id}
-                  type="button"
-                  onClick={() => goToSlotStep(professional.id)}
-                  className="flex items-center gap-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3 text-left transition-colors hover:border-teal-500 hover:bg-teal-50/40 dark:hover:bg-teal-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
-                >
-                  <span
-                    className="size-2.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: professional.color }}
-                    aria-hidden="true"
-                  />
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold text-slate-900 dark:text-slate-50">
-                      {professional.name}
-                    </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
-                      {professional.role}
-                    </span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-          <div className="mt-4">
-            <Button variant="secondary" size="sm" onClick={goBack}>
-              <ChevronLeft className="size-4" aria-hidden="true" />
-              Voltar
-            </Button>
-          </div>
-        </section>
-      ) : null}
-
       {step === "slot" ? (
         <section className="surface-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-ink-50">
             Escolha a data e o horário
           </h2>
 
@@ -338,7 +256,7 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
             onSelect={setSelectedSlot}
           />
 
-          <div className="mt-4 flex gap-2">
+          <div className="form-actions mt-4">
             <Button variant="secondary" size="sm" onClick={goBack}>
               <ChevronLeft className="size-4" aria-hidden="true" />
               Voltar
@@ -356,11 +274,11 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
 
       {step === "identify" && service && selectedSlot ? (
         <form onSubmit={handleSubmit} className="surface-card p-4 sm:p-5" noValidate>
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Seus dados</h2>
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-ink-50">Seus dados</h2>
 
-          <dl className="mt-3 space-y-1 rounded-xl bg-slate-50 dark:bg-slate-950 p-3 text-sm">
-            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-              <CalendarDays className="size-4 text-slate-400" aria-hidden="true" />
+          <dl className="mt-3 space-y-1 rounded-xl bg-ink-50 dark:bg-ink-950 p-3 text-sm">
+            <div className="flex items-center gap-2 text-ink-700 dark:text-ink-200">
+              <CalendarDays className="size-4 text-ink-400" aria-hidden="true" />
               <dt className="sr-only">Data</dt>
               <dd>
                 {formatDate(date, {
@@ -370,8 +288,8 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
                 })}
               </dd>
             </div>
-            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-              <Clock className="size-4 text-slate-400" aria-hidden="true" />
+            <div className="flex items-center gap-2 text-ink-700 dark:text-ink-200">
+              <Clock className="size-4 text-ink-400" aria-hidden="true" />
               <dt className="sr-only">Horário</dt>
               <dd>
                 {selectedSlot.startTime} · {service.name} ·{" "}
@@ -443,12 +361,12 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
             />
           </div>
 
-          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-3 text-xs text-ink-500 dark:text-ink-400">
             Seu agendamento fica pendente até o estúdio confirmar. Você recebe
             um link para acompanhar, remarcar ou cancelar.
           </p>
 
-          <div className="mt-4 flex gap-2">
+          <div className="form-actions mt-4">
             <Button variant="secondary" size="sm" onClick={goBack} type="button">
               <ChevronLeft className="size-4" aria-hidden="true" />
               Voltar

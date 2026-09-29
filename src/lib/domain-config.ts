@@ -10,8 +10,8 @@ export const appointmentStatusConfig: Record<
 > = {
   scheduled: {
     label: "Agendado",
-    className: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 ring-slate-200 dark:ring-slate-700",
-    dotClassName: "bg-slate-400",
+    className: "bg-ink-100 dark:bg-ink-800 text-ink-700 dark:text-ink-200 ring-ink-200 dark:ring-ink-700",
+    dotClassName: "bg-ink-400",
   },
   confirmed: {
     label: "Confirmado",
@@ -51,8 +51,8 @@ export const professionalStatusConfig: Record<
   },
   "off-duty": {
     label: "Fora do expediente",
-    className: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-slate-700",
-    dotClassName: "bg-slate-400",
+    className: "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 ring-ink-200 dark:ring-ink-700",
+    dotClassName: "bg-ink-400",
   },
 };
 
@@ -67,7 +67,7 @@ export const serviceStatusConfig: Record<
   },
   inactive: {
     label: "Inativo",
-    className: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-slate-700",
-    dotClassName: "bg-slate-400",
+    className: "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300 ring-ink-200 dark:ring-ink-700",
+    dotClassName: "bg-ink-400",
   },
 };

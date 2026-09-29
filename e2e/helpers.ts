@@ -23,7 +23,6 @@ export async function pickFirstSlot(page: Page) {
 export async function bookThroughPortal(page: Page, phone: string) {
   await page.goto("/agendar");
   await page.getByRole("button", { name: /Esmaltação em gel premium/ }).click();
-  await page.getByRole("button", { name: /Sem preferência/ }).click();
   const time = await pickFirstSlot(page);
   await page.getByRole("button", { name: "Continuar" }).click();
   await page.getByLabel("Nome", { exact: true }).fill("Teste");
@@ -36,11 +35,11 @@ export async function bookThroughPortal(page: Page, phone: string) {
 
 export async function login(
   page: Page,
-  user: { email: string; password: string },
+  user: { email: string; username?: string; password: string },
   callbackUrl?: string,
 ) {
   await page.goto(callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login");
-  await page.getByLabel("E-mail").fill(user.email);
+  await page.getByLabel("Usuário").fill(user.username ?? user.email);
   await page.getByLabel("Senha").fill(user.password);
   await page.getByRole("button", { name: "Entrar" }).click();
   // A primeira autenticação também abre o Postgres local dos testes.

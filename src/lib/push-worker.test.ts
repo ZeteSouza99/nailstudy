@@ -29,7 +29,7 @@ describe("worker das notificações", () => {
   it("sempre mostra uma notificação mesmo se o payload for inválido", async () => {
     const { handlers, showNotification } = worker();
     handlers.push({ data: { json: () => { throw new Error(); } }, waitUntil: vi.fn() });
-    expect(showNotification).toHaveBeenCalledWith("Nail Agenda", expect.any(Object));
+    expect(showNotification).toHaveBeenCalledWith("Erika Queiroz", expect.any(Object));
   });
 
   it("abre apenas a página interna de pedidos ao tocar no aviso", async () => {

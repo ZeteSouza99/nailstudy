@@ -16,7 +16,7 @@ const sizeClasses = {
 
 export function Avatar({
   name,
-  color = "#0f766e",
+  color = "#83423e",
   size = "md",
   className,
   decorative = false,
@@ -24,7 +24,7 @@ export function Avatar({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-full font-bold text-white ring-2 ring-white dark:ring-slate-900",
+        "inline-flex shrink-0 items-center justify-center rounded-full font-bold text-white ring-2 ring-white dark:ring-ink-900",
         sizeClasses[size],
         className,
       )}

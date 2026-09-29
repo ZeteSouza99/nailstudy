@@ -107,8 +107,8 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-slate-950 dark:text-slate-50 sm:text-2xl">Meu agendamento</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Olá, {appointment.clientFirstName}.</p>
+        <h1 className="text-xl font-bold text-ink-950 dark:text-ink-50 sm:text-2xl">Meu agendamento</h1>
+        <p className="mt-1 text-sm text-ink-600 dark:text-ink-300">Olá, {appointment.clientFirstName}.</p>
       </div>
 
       {feedback ? <Alert tone="success">{feedback}</Alert> : null}
@@ -117,27 +117,27 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
       <section className="surface-card p-4 sm:p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="truncate text-base font-semibold text-slate-900 dark:text-slate-50">{appointment.serviceName}</p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{formatCurrency(appointment.price)}</p>
+            <p className="truncate text-base font-semibold text-ink-900 dark:text-ink-50">{appointment.serviceName}</p>
+            <p className="text-sm text-ink-500 dark:text-ink-400">{formatCurrency(appointment.price)}</p>
           </div>
           <StatusBadge kind="appointment" status={appointment.status} className="shrink-0" />
         </div>
 
         <dl className="mt-4 space-y-2 text-sm">
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-            <CalendarDays className="size-4 text-slate-400" aria-hidden="true" />
+          <div className="flex items-center gap-2 text-ink-700 dark:text-ink-200">
+            <CalendarDays className="size-4 text-ink-400" aria-hidden="true" />
             <dt className="sr-only">Data</dt>
             <dd>{formatDate(appointment.date, { weekday: "long", day: "2-digit", month: "long" })}</dd>
           </div>
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-            <Clock className="size-4 text-slate-400" aria-hidden="true" />
+          <div className="flex items-center gap-2 text-ink-700 dark:text-ink-200">
+            <Clock className="size-4 text-ink-400" aria-hidden="true" />
             <dt className="sr-only">Horário</dt>
             <dd>
               {appointment.startTime} às {appointment.endTime}
             </dd>
           </div>
-          <div className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-            <UserRound className="size-4 text-slate-400" aria-hidden="true" />
+          <div className="flex items-center gap-2 text-ink-700 dark:text-ink-200">
+            <UserRound className="size-4 text-ink-400" aria-hidden="true" />
             <dt className="sr-only">Profissional</dt>
             <dd>{appointment.professionalName}</dd>
           </div>
@@ -163,7 +163,7 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
             )}
           </div>
         ) : appointment.status === "scheduled" || appointment.status === "confirmed" ? (
-          <p className="mt-5 rounded-xl bg-slate-50 dark:bg-slate-950 p-3 text-xs text-slate-600 dark:text-slate-300">
+          <p className="mt-5 rounded-xl bg-ink-50 dark:bg-ink-950 p-3 text-xs text-ink-600 dark:text-ink-300">
             Alterações online só são possíveis com no mínimo {MIN_CANCEL_LEAD_TIME_MINUTES} minutos de
             antecedência. Para mudar algo agora, fale com o estúdio.
           </p>
@@ -172,7 +172,7 @@ export function AppointmentManager({ appointment, catalog }: AppointmentManagerP
 
       {mode === "reschedule" ? (
         <section className="surface-card p-4 sm:p-5">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Escolha o novo horário</h2>
+          <h2 className="text-sm font-semibold text-ink-900 dark:text-ink-50">Escolha o novo horário</h2>
 
           <SlotPicker
             id="reschedule-date"

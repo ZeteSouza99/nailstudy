@@ -46,7 +46,7 @@ export function ConfirmDialog({
     <Modal open={open} onClose={onClose} title={title} description={description}>
       <div className="space-y-4 p-5 sm:p-6">
         {error ? <Alert>{error}</Alert> : null}
-        <div className="flex justify-end gap-2">
+        <div className="form-actions">
           <Button variant="secondary" onClick={onClose} data-modal-initial-focus>
             Voltar
           </Button>

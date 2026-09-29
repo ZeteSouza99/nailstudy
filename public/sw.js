@@ -13,7 +13,7 @@ self.addEventListener("push", (event) => {
     // Mesmo um payload inválido deve resultar em notificação visível no iOS.
   }
   event.waitUntil(self.registration.showNotification(
-    typeof message.title === "string" ? message.title : "Nail Agenda",
+    typeof message.title === "string" ? message.title : "Erika Queiroz",
     {
       body: typeof message.body === "string" ? message.body : "Confira os pedidos pendentes no painel.",
       icon: "/icons/icon-192.png",

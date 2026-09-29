@@ -122,6 +122,7 @@ export const users = pgTable(
     id: text("id").primaryKey(),
     /** Chave constante e única: o sistema aceita exatamente uma conta administrativa. */
     singletonKey: integer("singleton_key").notNull().default(1).unique(),
+    username: text("username").notNull().default("Erika").unique(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),

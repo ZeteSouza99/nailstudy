@@ -1,4 +1,5 @@
 import "server-only";
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
 
 import { and, asc, desc, eq, gte, inArray, isNull, lte } from "drizzle-orm";
 
@@ -84,8 +85,8 @@ export async function listBillableAppointments(): Promise<BillableAppointment[]>
     clientName: row.clientName,
     serviceId: row.serviceId,
     serviceName: row.serviceName,
-    professionalId: row.professionalId,
-    professionalName: row.professionalName,
+    professionalId: STUDIO_PROFESSIONAL_ID,
+    professionalName: STUDIO_PROFESSIONAL_NAME,
     price: centsToReais(row.priceCents),
     commissionRate: bpsToPercent(row.commissionRateBps),
   }));

@@ -29,13 +29,17 @@ const {
   getNavigationCounters,
   listAppointmentsInRange,
   listPendingPortalAppointments,
+  listProfessionals,
   searchClients,
 } = await import("./queries");
 const {
   createBlock,
+  createProfessional,
+  createService,
   deleteProfessional,
   deleteService,
   updateProfessional,
+  updateStudioSettings,
 } = await import("./registry-service");
 
 let admin: Awaited<ReturnType<typeof seedAdmin>>;
@@ -44,7 +48,7 @@ function appointmentInput(overrides: Record<string, string> = {}) {
   return {
     clientId: "cli-1",
     serviceId: "srv-1",
-    professionalId: "pro-1",
+    professionalId: "pro-001",
     date: "2026-09-02",
     startTime: "10:00",
     ...overrides,
@@ -78,7 +82,7 @@ describe("agendamentos da equipe", () => {
       price: 150,
       clientName: "Carla Souza",
       serviceName: "Limpeza de pele",
-      professionalName: "Ana",
+      professionalName: "Erika Queiroz",
     });
 
     const [row] = await db.select().from(appointments).where(eq(appointments.id, created.id));
@@ -138,7 +142,7 @@ describe("agendamentos da equipe", () => {
     await changeAppointmentStatus({ id: created.id, status: "confirmed" }, admin);
 
     const moved = await rescheduleStaffAppointment(
-      { id: created.id, date: "2026-09-03", startTime: "14:00", professionalId: "pro-1" },
+      { id: created.id, date: "2026-09-03", startTime: "14:00", professionalId: "pro-001" },
       admin,
     );
     expect(moved).toMatchObject({ date: "2026-09-03", startTime: "14:00", status: "confirmed" });
@@ -156,11 +160,11 @@ describe("agendamentos da equipe", () => {
 });
 
 describe("cadastros", () => {
-  it("troca os serviços da profissional e propaga o nome aos agendamentos futuros", async () => {
+  it("mantém Erika e todos os serviços ao receber um formulário antigo", async () => {
     const { db } = await getTestDatabase();
     const created = await createStaffAppointment(appointmentInput(), admin);
 
-    await updateProfessional("pro-1", {
+    await updateProfessional("pro-001", {
       name: "Ana Paula",
       role: "Esteticista",
       specialties: [],
@@ -178,18 +182,49 @@ describe("cadastros", () => {
     const links = await db
       .select({ serviceId: professionalServices.serviceId })
       .from(professionalServices)
-      .where(eq(professionalServices.professionalId, "pro-1"));
+      .where(eq(professionalServices.professionalId, "pro-001"));
     expect(links.map((link) => link.serviceId).sort()).toEqual(["srv-1", "srv-2"]);
 
     const [row] = await db.select().from(appointments).where(eq(appointments.id, created.id));
-    expect(row.professionalName).toBe("Ana Paula");
+    expect(row.professionalName).toBe("Erika Queiroz");
   });
 
   it("não exclui serviço ou profissional com histórico", async () => {
     await createStaffAppointment(appointmentInput(), admin);
     await expect(deleteService("srv-1")).rejects.toThrow(/Desative-o/);
-    await expect(deleteProfessional("pro-1")).rejects.toThrow(/Desative-a/);
+    await expect(deleteProfessional()).rejects.toThrow(/única profissional/);
     await expect(deleteService("srv-2")).resolves.toBeUndefined();
+  });
+});
+
+describe("estúdio com uma única profissional", () => {
+  it("ignora a escolha antiga de profissional e impede horários simultâneos", async () => {
+    expect((await listProfessionals()).map((professional) => professional.id)).toEqual(["pro-001"]);
+    const created = await createStaffAppointment(appointmentInput({ professionalId: "pro-2" }), admin);
+    expect(created).toMatchObject({ professionalId: "pro-001", professionalName: "Erika Queiroz" });
+    await seedClient("cli-2", "11977770002", "Outra cliente");
+    await expect(createStaffAppointment(appointmentInput({ professionalId: "pro-2", clientId: "cli-2", startTime: "10:30" }), admin)).rejects.toThrow(/já possui um atendimento/);
+  });
+
+  it("considera os registros arquivados na disponibilidade da agenda única", async () => {
+    const { db } = await getTestDatabase();
+    const created = await createStaffAppointment(appointmentInput(), admin);
+    await db.update(appointments).set({ professionalId: "pro-2", professionalName: "Cadastro antigo" }).where(eq(appointments.id, created.id));
+    await seedClient("cli-2", "11977770002", "Outra cliente");
+    await expect(createStaffAppointment(appointmentInput({ clientId: "cli-2", startTime: "10:30" }), admin)).rejects.toThrow(/já possui um atendimento/);
+  });
+
+  it("vincula novos serviços à Erika e bloqueia criar ou excluir profissionais", async () => {
+    const service = await createService({ name: "Nail art", category: "Unhas", description: "Decoração", durationMinutes: 30, bufferMinutes: 0, price: 40, status: "active", color: "#83423e" });
+    expect((await listProfessionals())[0].serviceIds).toContain(service.id);
+    await expect(createProfessional()).rejects.toThrow(/apenas Erika Queiroz/);
+    await expect(deleteProfessional()).rejects.toThrow(/não pode ser excluída/);
+  });
+
+  it("atualiza os horários da Erika sem habilitar os cadastros antigos", async () => {
+    await updateStudioSettings({ active: true, workDays: ["Seg", "Qua"], workStart: "09:00", workEnd: "18:00", breakStart: "12:00", breakEnd: "13:00" });
+    expect(await listProfessionals()).toMatchObject([{ id: "pro-001", name: "Erika Queiroz", workDays: ["Seg", "Qua"], workStart: "09:00", breakStart: "12:00" }]);
+    await expect(createStaffAppointment(appointmentInput({ date: "2026-09-03" }), admin)).rejects.toThrow();
   });
 });
 
@@ -230,7 +265,7 @@ describe("consultas do painel", () => {
         lastName: "Silva",
         phone: "(11) 98888-7777",
         serviceId: "srv-1",
-        professionalId: "pro-1",
+        professionalId: "pro-001",
         date: "2026-09-02",
         startTime: "10:00",
       },

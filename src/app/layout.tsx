@@ -7,18 +7,19 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Nail Agenda",
-    template: "%s | Nail Agenda",
+    default: "Erika Queiroz | Nail Designer",
+    template: "%s | Erika Queiroz",
   },
-  description: "Agendamento e gestão para profissionais de unhas.",
-  appleWebApp: { capable: true, title: "Nail Agenda", statusBarStyle: "default" },
+  description: "Erika Queiroz Nail Designer — agende seu horário e cuide de você.",
+  appleWebApp: { capable: true, title: "Erika Queiroz", statusBarStyle: "default" },
   icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#073b3a",
+  viewportFit: "cover",
+  themeColor: "#83423e",
 };
 
 export default function RootLayout({

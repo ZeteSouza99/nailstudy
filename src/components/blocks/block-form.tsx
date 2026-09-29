@@ -19,7 +19,7 @@ interface BlockFormProps {
   onDone: (message: string) => void;
 }
 
-export function BlockForm({ professionals, today, onCancel, onDone }: BlockFormProps) {
+export function BlockForm({ today, onCancel, onDone }: BlockFormProps) {
   const [allDay, setAllDay] = useState(true);
   const [state, onSubmit, isPending] = useFormAction(blockSchema, createBlockAction, (result) =>
     onDone(
@@ -49,24 +49,9 @@ export function BlockForm({ professionals, today, onCancel, onDone }: BlockFormP
         />
       </FormField>
 
-      <FormField id="block-professional" label="Vale para" error={errors.professionalId}>
-        <select
-          {...fieldA11y("block-professional", errors.professionalId)}
-          name="professionalId"
-          className="form-control"
-        >
-          <option value="">Estúdio inteiro</option>
-          {professionals
-            .filter((professional) => professional.active)
-            .map((professional) => (
-              <option key={professional.id} value={professional.id}>
-                {professional.name}
-              </option>
-            ))}
-        </select>
-      </FormField>
+      <p className="text-sm text-ink-500 dark:text-ink-400">O bloqueio vale para a agenda de Erika Queiroz.</p>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
         <FormField id="block-start-date" label="De" error={errors.startDate}>
           <input
             {...fieldA11y("block-start-date", errors.startDate)}
@@ -89,19 +74,19 @@ export function BlockForm({ professionals, today, onCancel, onDone }: BlockFormP
         </FormField>
       </div>
 
-      <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+      <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-700 dark:text-ink-200">
         <input
           type="checkbox"
           name="allDay"
           checked={allDay}
           onChange={(event) => setAllDay(event.target.checked)}
-          className="size-4 accent-teal-700"
+          className="size-4 accent-brand-700"
         />
         Dia inteiro
       </label>
 
       {!allDay ? (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
           <FormField id="block-start-time" label="Das" error={errors.startTime}>
             <input
               {...fieldA11y("block-start-time", errors.startTime)}
@@ -129,12 +114,12 @@ export function BlockForm({ professionals, today, onCancel, onDone }: BlockFormP
         </div>
       ) : null}
 
-      <p className="text-xs text-slate-500 dark:text-slate-400">
+      <p className="text-xs text-ink-500 dark:text-ink-400">
         Bloqueios impedem novos agendamentos no período. Atendimentos já marcados não são cancelados
         automaticamente.
       </p>
 
-      <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="form-actions border-t border-ink-100 dark:border-ink-800 pt-4">
         <Button variant="secondary" onClick={onCancel}>
           Cancelar
         </Button>

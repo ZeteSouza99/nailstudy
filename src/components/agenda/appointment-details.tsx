@@ -9,7 +9,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { useMemo, useOptimistic, useState, useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 
 import {
   changeAppointmentStatusAction,
@@ -28,7 +28,6 @@ import {
   appointmentStatusTransitions,
   CLINIC_CLOSE_TIME,
   CLINIC_OPEN_TIME,
-  getWorkDayLabel,
 } from "@/lib/scheduling";
 import { staffRescheduleSchema } from "@/lib/validation";
 import type {
@@ -93,15 +92,15 @@ export function AppointmentDetails({
 
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-base font-bold text-slate-950 dark:text-slate-50">{appointment.clientName}</p>
-          <p className="text-sm text-slate-600 dark:text-slate-300">{appointment.serviceName}</p>
+          <p className="truncate text-base font-bold text-ink-950 dark:text-ink-50">{appointment.clientName}</p>
+          <p className="text-sm text-ink-600 dark:text-ink-300">{appointment.serviceName}</p>
         </div>
         <StatusBadge kind="appointment" status={status} />
       </div>
 
-      <dl className="grid gap-2 rounded-xl bg-slate-50 dark:bg-slate-950 p-3 text-sm text-slate-700 dark:text-slate-200">
+      <dl className="grid gap-2 rounded-xl bg-ink-50 dark:bg-ink-950 p-3 text-sm text-ink-700 dark:text-ink-200">
         <div className="flex items-center gap-2">
-          <CalendarClock className="size-4 text-slate-400" aria-hidden="true" />
+          <CalendarClock className="size-4 text-ink-400" aria-hidden="true" />
           <dt className="sr-only">Quando</dt>
           <dd>
             {formatDate(appointment.date, { weekday: "long", day: "2-digit", month: "long" })},{" "}
@@ -110,15 +109,15 @@ export function AppointmentDetails({
           </dd>
         </div>
         <div className="flex items-center gap-2">
-          <UserRound className="size-4 text-slate-400" aria-hidden="true" />
+          <UserRound className="size-4 text-ink-400" aria-hidden="true" />
           <dt className="sr-only">Profissional</dt>
           <dd>{appointment.professionalName}</dd>
         </div>
         <div className="flex items-center justify-between gap-2">
           <dt className="sr-only">Valor</dt>
-          <dd className="font-semibold text-slate-900 dark:text-slate-50">{formatCurrency(appointment.price)}</dd>
+          <dd className="font-semibold text-ink-900 dark:text-ink-50">{formatCurrency(appointment.price)}</dd>
           {appointment.source === "portal" ? (
-            <dd className="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300">
+            <dd className="inline-flex items-center gap-1 text-xs font-semibold text-ink-600 dark:text-ink-300">
               <Globe className="size-3.5" aria-hidden="true" />
               Agendado pelo portal
             </dd>
@@ -171,7 +170,7 @@ export function AppointmentDetails({
         />
       ) : null}
 
-      <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="flex items-center justify-between border-t border-ink-100 dark:border-ink-800 pt-4">
         <Button size="sm" variant="ghost" onClick={() => setIsDeleting(true)}>
           <Trash2 className="size-4" aria-hidden="true" />
           Excluir registro
@@ -200,7 +199,6 @@ export function AppointmentDetails({
 
 function RescheduleForm({
   appointment,
-  professionals,
   today,
   onDone,
 }: {
@@ -210,37 +208,22 @@ function RescheduleForm({
   onDone: () => void;
 }) {
   const [date, setDate] = useState(appointment.date < today ? today : appointment.date);
-  const [professionalId, setProfessionalId] = useState(appointment.professionalId);
   const [state, onSubmit, isPending] = useFormAction(
     staffRescheduleSchema,
     rescheduleAppointmentAction,
     onDone,
   );
 
-  const eligible = useMemo(() => {
-    const dayLabel = getWorkDayLabel(date);
-    return professionals.filter(
-      (professional) =>
-        professional.active &&
-        professional.serviceIds.includes(appointment.serviceId) &&
-        Boolean(dayLabel && professional.workDays.includes(dayLabel)),
-    );
-  }, [appointment.serviceId, date, professionals]);
-
   const errors = {
     date: fieldError(state, "date"),
     startTime: fieldError(state, "startTime"),
     professionalId: fieldError(state, "professionalId"),
   };
-  const selectedProfessionalId = eligible.some((professional) => professional.id === professionalId)
-    ? professionalId
-    : (eligible[0]?.id ?? "");
-
   return (
-    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-slate-200 dark:border-slate-700 p-3" noValidate>
+    <form onSubmit={onSubmit} className="space-y-3 rounded-xl border border-ink-200 dark:border-ink-700 p-3" noValidate>
       <input type="hidden" name="id" value={appointment.id} />
       {state.status === "error" ? <Alert>{state.error}</Alert> : null}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
         <FormField id="reschedule-date" label="Nova data" error={errors.date}>
           <input
             {...fieldA11y("reschedule-date", errors.date)}
@@ -265,22 +248,6 @@ function RescheduleForm({
           />
         </FormField>
       </div>
-      <FormField id="reschedule-professional" label="Profissional" error={errors.professionalId}>
-        <select
-          {...fieldA11y("reschedule-professional", errors.professionalId)}
-          name="professionalId"
-          className="form-control"
-          value={selectedProfessionalId}
-          onChange={(event) => setProfessionalId(event.target.value)}
-        >
-          {eligible.length === 0 ? <option value="">Nenhuma profissional nesse dia</option> : null}
-          {eligible.map((professional) => (
-            <option key={professional.id} value={professional.id}>
-              {professional.name}
-            </option>
-          ))}
-        </select>
-      </FormField>
       <div className="flex justify-end">
         <Button type="submit" size="sm" loading={isPending}>
           Confirmar novo horário

@@ -17,19 +17,19 @@ export function AppShell({
   counters: NavigationCounters;
 }) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-dvh bg-ink-50 dark:bg-ink-950">
       <a
         href="#main-content"
-        className="fixed left-4 top-3 z-100 -translate-y-20 rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition focus-visible:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-300 dark:focus-visible:ring-teal-700"
+        className="fixed left-4 top-3 z-100 -translate-y-20 rounded-lg bg-ink-950 px-4 py-2 text-sm font-semibold text-white transition focus-visible:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 dark:focus-visible:ring-brand-700"
       >
         Pular para o conteúdo
       </a>
       <DesktopSidebar counters={counters} />
-      <div className="min-h-screen lg:pl-66">
+      <div className="min-h-dvh lg:pl-66">
         <Topbar user={user} today={today} />
         <main
           id="main-content"
-          className="mx-auto w-full max-w-[1600px] px-4 pb-24 pt-5 sm:px-6 lg:px-8 lg:pb-10 lg:pt-6"
+          className="mx-auto min-w-0 w-full max-w-[1600px] px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 sm:px-6 lg:px-8 lg:pb-10 lg:pt-6"
         >
           {children}
         </main>

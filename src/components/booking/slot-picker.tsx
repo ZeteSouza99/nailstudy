@@ -52,9 +52,9 @@ export function SlotPicker({
 
       <div className="mt-4" aria-live="polite">
         {isLoading ? (
-          <p className="text-sm text-slate-500 dark:text-slate-400">Buscando horários disponíveis…</p>
+          <p className="text-sm text-ink-500 dark:text-ink-400">Buscando horários disponíveis…</p>
         ) : grouped.length === 0 ? (
-          <p className="text-sm text-slate-600 dark:text-slate-300">Nenhum horário livre nesta data. Tente outro dia.</p>
+          <p className="text-sm text-ink-600 dark:text-ink-300">Nenhum horário livre nesta data. Tente outro dia.</p>
         ) : (
           <div className="grid grid-cols-3 gap-2 sm:grid-cols-5" role="group" aria-label="Horários disponíveis">
             {grouped.map(({ startTime, options }) => {
@@ -66,10 +66,10 @@ export function SlotPicker({
                   onClick={() => onSelect(options[0])}
                   aria-pressed={isSelected}
                   className={cn(
-                    "rounded-lg border px-2 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600",
+                    "min-h-11 rounded-lg border px-2 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600",
                     isSelected
-                      ? "border-teal-600 bg-teal-700 text-white"
-                      : "border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-950",
+                      ? "border-brand-600 bg-brand-700 text-white"
+                      : "border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-200 hover:border-brand-500 hover:bg-brand-50 dark:hover:bg-brand-950",
                   )}
                 >
                   {startTime}
@@ -81,9 +81,9 @@ export function SlotPicker({
       </div>
 
       {selected ? (
-        <p className="mt-3 text-xs text-slate-600 dark:text-slate-300">
+        <p className="mt-3 text-xs text-ink-600 dark:text-ink-300">
           Atendimento com{" "}
-          <strong className="font-semibold text-slate-900 dark:text-slate-50">{selected.professionalName}</strong>.
+          <strong className="font-semibold text-ink-900 dark:text-ink-50">{selected.professionalName}</strong>.
         </p>
       ) : null}
     </div>

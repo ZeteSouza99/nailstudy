@@ -1,7 +1,7 @@
 import "server-only";
 
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { eq, or, sql } from "drizzle-orm";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
@@ -25,14 +25,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       name: "credentials",
       credentials: {
+        username: { label: "Usuário", type: "text" },
         email: { label: "E-mail", type: "email" },
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials, request) {
-        const email = String(credentials?.email ?? "").trim().toLowerCase();
+        const identifier = String(credentials?.username ?? credentials?.email ?? "").trim().toLowerCase();
         const password = String(credentials?.password ?? "");
 
-        if (!email || !password) {
+        if (!identifier || identifier.length > 254 || !password) {
           return null;
         }
 
@@ -40,11 +41,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
         const ipRateKey = `login:ip:${ip}`;
-        const emailRateKey = `login:email:${email}`;
+        const accountRateKey = `login:account:${identifier}`;
 
         try {
           await enforceRateLimit(ipRateKey, rateLimits.loginIp);
-          await enforceRateLimit(emailRateKey, rateLimits.loginEmail);
+          await enforceRateLimit(accountRateKey, rateLimits.loginEmail);
         } catch (error) {
           if (error instanceof UserError) throw new RateLimitedSignin();
           throw error;
@@ -53,7 +54,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const [user] = await db
           .select()
           .from(users)
-          .where(eq(users.email, email))
+          .where(or(sql`lower(${users.username}) = ${identifier}`, eq(users.email, identifier)))
           .limit(1);
 
         const matches = await bcrypt.compare(password, user?.password ?? DUMMY_HASH);
@@ -62,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        await resetRateLimits([ipRateKey, emailRateKey]);
+        await resetRateLimits([ipRateKey, accountRateKey]);
         return { id: user.id, name: user.name, email: user.email };
       },
     }),

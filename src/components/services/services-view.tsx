@@ -94,13 +94,13 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
           const Icon = item.icon;
           return (
             <article key={item.label} className="surface-card flex items-center gap-4 p-4 sm:p-5">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400">
                 <Icon className="size-5" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xl font-extrabold text-slate-950 dark:text-slate-50">{item.value}</p>
-                <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">{item.label}</p>
-                <p className="mt-0.5 text-[11px] text-slate-600 dark:text-slate-300">{item.detail}</p>
+                <p className="truncate text-xl font-extrabold text-ink-950 dark:text-ink-50">{item.value}</p>
+                <p className="text-xs font-semibold text-ink-700 dark:text-ink-200">{item.label}</p>
+                <p className="mt-0.5 text-[11px] text-ink-600 dark:text-ink-300">{item.detail}</p>
               </div>
             </article>
           );
@@ -138,7 +138,7 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
               <option value="inactive">Inativos</option>
             </select>
           </div>
-          <div className="inline-flex rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 p-1 xl:ml-auto" role="group" aria-label="Modo de exibição">
+          <div className="inline-flex rounded-xl border border-ink-200 dark:border-ink-700 bg-ink-50 dark:bg-ink-950 p-1 xl:ml-auto" role="group" aria-label="Modo de exibição">
             {(
               [
                 ["grid", "Cards", Grid2X2],
@@ -151,8 +151,8 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
                 onClick={() => setView(value)}
                 aria-pressed={view === value}
                 className={cn(
-                  "inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 sm:flex-none",
-                  view === value ? "bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-300 shadow-sm" : "text-slate-500 dark:text-slate-400",
+                  "inline-flex h-11 sm:h-8 flex-1 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:flex-none",
+                  view === value ? "bg-white dark:bg-ink-900 text-brand-700 dark:text-brand-300 shadow-sm" : "text-ink-500 dark:text-ink-400",
                 )}
               >
                 <Icon className="size-3.5" aria-hidden="true" /> {label}
@@ -171,9 +171,9 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
           </section>
         ) : (
           <section className="surface-card overflow-hidden" aria-label="Tabela de serviços">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-200 text-left">
-                <thead className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/70 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <div className="relative overflow-x-auto">
+              <table role="table" className="responsive-table w-full min-w-200 text-left">
+                <thead className="border-b border-ink-100 dark:border-ink-800 bg-ink-50/70 dark:bg-ink-950/70 text-[10px] font-bold uppercase tracking-wider text-ink-500 dark:text-ink-400">
                   <tr>
                     <th className="px-5 py-3">Serviço</th>
                     <th className="px-5 py-3">Categoria</th>
@@ -183,29 +183,29 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
                     {canManage ? <th className="px-5 py-3"><span className="sr-only">Ações</span></th> : null}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="divide-y divide-ink-100 dark:divide-ink-800">
                   {filteredServices.map((service) => (
-                    <tr key={service.id} className="hover:bg-slate-50/70 dark:hover:bg-slate-950/70">
-                      <td className="px-5 py-4">
-                        <div className="flex items-center gap-3">
-                          <span className="flex size-9 items-center justify-center rounded-xl text-white" style={{ backgroundColor: service.color }}>
+                    <tr key={service.id} className="hover:bg-ink-50/70 dark:hover:bg-ink-950/70">
+                      <td data-label="Serviço" className="px-5 py-4">
+                        <div className="flex min-w-0 items-start gap-2 sm:items-center sm:gap-3">
+                          <span className="hidden size-9 shrink-0 items-center sm:flex justify-center rounded-xl text-white" style={{ backgroundColor: service.color }}>
                             <Sparkles className="size-4" aria-hidden="true" />
                           </span>
                           <div>
-                            <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">{service.name}</p>
-                            <p className="mt-0.5 max-w-sm truncate text-xs text-slate-600 dark:text-slate-300">{service.description}</p>
+                            <p className="text-sm font-semibold text-ink-900 dark:text-ink-50">{service.name}</p>
+                            <p className="mt-0.5 max-w-sm whitespace-normal break-words sm:truncate text-xs text-ink-600 dark:text-ink-300">{service.description}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-xs font-medium text-slate-600 dark:text-slate-300">{service.category}</td>
-                      <td className="px-5 py-4 text-xs text-slate-600 dark:text-slate-300">
+                      <td data-label="Categoria" className="px-5 py-4 text-xs font-medium text-ink-600 dark:text-ink-300">{service.category}</td>
+                      <td data-label="Duração" className="px-5 py-4 text-xs text-ink-600 dark:text-ink-300">
                         {formatDuration(service.durationMinutes)}
                         {service.bufferMinutes ? ` + ${service.bufferMinutes} min` : ""}
                       </td>
-                      <td className="px-5 py-4 text-sm font-bold text-slate-900 dark:text-slate-50">{formatCurrency(service.price)}</td>
-                      <td className="px-5 py-4"><StatusBadge kind="service" status={service.status} /></td>
+                      <td data-label="Preço" className="px-5 py-4 text-sm font-bold text-ink-900 dark:text-ink-50">{formatCurrency(service.price)}</td>
+                      <td data-label="Status" className="px-5 py-4"><StatusBadge kind="service" status={service.status} /></td>
                       {canManage ? (
-                        <td className="px-5 py-4 text-right">
+                        <td data-label="Ações" className="px-5 py-4 text-right">
                           <Button size="sm" variant="secondary" onClick={() => setEditing(service)}>
                             Editar
                           </Button>
@@ -224,7 +224,7 @@ export function ServicesView({ services, canManage }: { services: Service[]; can
         </section>
       )}
 
-      <p className="text-center text-xs text-slate-600 dark:text-slate-300">
+      <p className="text-center text-xs text-ink-600 dark:text-ink-300">
         Exibindo {filteredServices.length} de {services.length} serviços
       </p>
 
@@ -264,15 +264,15 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen?: (service:
         <span className="mt-4 block text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: `color-mix(in srgb, ${service.color} 70%, var(--foreground))` }}>
           {service.category}
         </span>
-        <span className="mt-1 block font-bold text-slate-950 dark:text-slate-50">{service.name}</span>
-        <span className="mt-2 block min-h-10 text-xs leading-5 text-slate-500 dark:text-slate-400">{service.description}</span>
-        <span className="mt-5 flex items-end justify-between gap-3 border-t border-slate-100 dark:border-slate-800 pt-4">
-          <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
-            <Clock3 className="size-4 text-slate-400" aria-hidden="true" />
+        <span className="mt-1 block font-bold text-ink-950 dark:text-ink-50">{service.name}</span>
+        <span className="mt-2 block min-h-10 text-xs leading-5 text-ink-500 dark:text-ink-400">{service.description}</span>
+        <span className="mt-5 flex items-end justify-between gap-3 border-t border-ink-100 dark:border-ink-800 pt-4">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-ink-500 dark:text-ink-400">
+            <Clock3 className="size-4 text-ink-400" aria-hidden="true" />
             {formatDuration(service.durationMinutes)}
             {service.bufferMinutes ? ` + ${service.bufferMinutes} min de preparo` : ""}
           </span>
-          <span className="text-lg font-extrabold text-slate-950 dark:text-slate-50">{formatCurrency(service.price)}</span>
+          <span className="text-lg font-extrabold text-ink-950 dark:text-ink-50">{formatCurrency(service.price)}</span>
         </span>
       </span>
     </>
@@ -284,7 +284,7 @@ function ServiceCard({ service, onOpen }: { service: Service; onOpen?: (service:
     <button
       type="button"
       onClick={() => onOpen(service)}
-      className={cn(className, "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600")}
+      className={cn(className, "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600")}
       aria-label={`Editar ${service.name}`}
     >
       {body}

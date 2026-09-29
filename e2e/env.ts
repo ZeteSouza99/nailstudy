@@ -19,8 +19,9 @@ export const e2eEnv = {
 
 export const e2eUsers = {
   admin: {
+    username: "Erika",
     email: "admin@e2e.test",
-    name: "Admin E2E",
+    name: "Erika",
     password: "senha-admin-e2e",
   },
 };

@@ -15,19 +15,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-teal-700 text-white shadow-sm hover:bg-teal-800 focus-visible:ring-teal-600",
+    "bg-brand-700 text-white shadow-sm hover:bg-brand-800 focus-visible:ring-brand-600 dark:bg-brand-300 dark:text-ink-950 dark:hover:bg-brand-200 dark:focus-visible:ring-brand-300",
   secondary:
-    "border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-950 focus-visible:ring-slate-400",
+    "border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-900 text-ink-700 dark:text-ink-200 shadow-sm hover:border-ink-300 dark:hover:border-ink-600 hover:bg-ink-50 dark:hover:bg-ink-950 focus-visible:ring-ink-400",
   ghost:
-    "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-50 focus-visible:ring-slate-400",
+    "text-ink-600 dark:text-ink-300 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-50 focus-visible:ring-ink-400",
   danger:
     "bg-rose-600 text-white shadow-sm hover:bg-rose-700 focus-visible:ring-rose-500",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-9 gap-2 rounded-lg px-3 text-sm",
-  md: "h-10 gap-2 rounded-xl px-4 text-sm",
-  icon: "size-10 rounded-xl",
+  sm: "min-h-11 gap-2 rounded-lg px-3 py-2 text-sm sm:min-h-9",
+  md: "min-h-11 gap-2 rounded-xl px-4 py-2 text-sm sm:min-h-10",
+  icon: "size-11 rounded-xl sm:size-10",
 };
 
 export function Button({
@@ -46,7 +46,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex shrink-0 items-center justify-center font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-ink-900 disabled:pointer-events-none disabled:opacity-50",
         variantClasses[variant],
         sizeClasses[size],
         className,

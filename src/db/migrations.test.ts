@@ -101,9 +101,21 @@ describe("migrations", () => {
       { id: "srv-2", price_cents: 9999 },
     ]);
     expect(
-      await rows(legacy, "select service_id from professional_services order by service_id"),
+      await rows(legacy, "select service_id from professional_services where professional_id = 'pro-1' order by service_id"),
     ).toEqual([{ service_id: "srv-1" }, { service_id: "srv-2" }]);
-    expect(await rows(legacy, "select active from professionals")).toEqual([{ active: true }]);
+    expect(await rows(legacy, "select active from professionals where id = 'pro-1'")).toEqual([{ active: false }]);
+  });
+
+  it("ativa somente Erika, habilita todos os serviços e preserva os registros antigos", async () => {
+    expect(await rows(legacy, "select id, name from professionals where active = true")).toEqual([
+      { id: "pro-001", name: "Erika Queiroz" },
+    ]);
+    expect(await rows(legacy, "select service_id from professional_services where professional_id = 'pro-001' order by service_id")).toEqual([
+      { service_id: "srv-1" }, { service_id: "srv-2" },
+    ]);
+    expect(await rows(legacy, "select professional_id, professional_name, price_cents from appointments where id = 'apt-staff'")).toEqual([
+      { professional_id: "pro-1", professional_name: "Ana", price_cents: 15050 },
+    ]);
   });
 
   it("mantém válidos os links já enviados, guardando só o hash", async () => {
@@ -146,6 +158,12 @@ describe("migrations", () => {
       .catch((caught: unknown) => caught);
 
     expect(getPgError(error)?.code).toBe("23505");
+  });
+
+  it("atribui o usuário Erika à conta existente sem trocar sua senha", async () => {
+    expect(await rows(legacy, "select username, password from users")).toEqual([
+      { username: "Erika", password: "hash" },
+    ]);
   });
 
   it("recusa no banco atendimentos sobrepostos da mesma profissional", async () => {

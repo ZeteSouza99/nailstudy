@@ -49,8 +49,8 @@ async function seedCompleted(id: string, options: CompletedOptions = {}) {
     clientName: "Carla Souza",
     serviceId: options.serviceId ?? "srv-1",
     serviceName: options.serviceName ?? "Limpeza de pele",
-    professionalId: options.professionalId ?? "pro-1",
-    professionalName: options.professionalName ?? "Ana",
+    professionalId: options.professionalId ?? "pro-001",
+    professionalName: options.professionalName ?? "Erika Queiroz",
     status: options.status ?? "completed",
     priceCents: options.priceCents ?? 15000,
     source: "staff",
@@ -74,7 +74,7 @@ beforeEach(async () => {
   vi.mocked(requirePageUser).mockResolvedValue(people.reception);
   const { db } = await getTestDatabase();
   // Ana ganha 40% de comissão; Bia fica sem comissão.
-  await db.update(professionals).set({ commissionRateBps: 4000 }).where(eq(professionals.id, "pro-1"));
+  await db.update(professionals).set({ commissionRateBps: 4000 }).where(eq(professionals.id, "pro-001"));
 });
 
 describe("pagamentos", () => {
@@ -138,7 +138,7 @@ describe("pagamentos", () => {
     expect(payment.items[0].commission).toBe(39.96);
 
     const { db } = await getTestDatabase();
-    await db.update(professionals).set({ commissionRateBps: 1000 }).where(eq(professionals.id, "pro-1"));
+    await db.update(professionals).set({ commissionRateBps: 1000 }).where(eq(professionals.id, "pro-001"));
     const [stored] = await listPayments("2026-09-01", "2026-09-01");
     expect(stored.items[0]).toMatchObject({ price: 99.9, commissionRate: 40, commission: 39.96 });
     expect(await listPayments("2026-09-02", "2026-09-30")).toEqual([]);
@@ -273,8 +273,8 @@ describe("pagamentos", () => {
       clientName: "Carla Souza",
       serviceId: "srv-1",
       serviceName: "Limpeza de pele",
-      professionalId: "pro-1",
-      professionalName: "Ana",
+      professionalId: "pro-001",
+      professionalName: "Erika Queiroz",
       status: "scheduled",
       priceCents: 15000,
       source: "staff",
@@ -371,7 +371,7 @@ describe("pagamentos", () => {
     expect(report.summary.commission).toBe(60);
     expect(report.summary.completedCount).toBe(2);
     expect(report.byMethod.find((row) => row.method === "pix")?.amount).toBe(200);
-    expect(report.byProfessional.find((row) => row.professionalId === "pro-1")?.commission).toBe(60);
+    expect(report.byProfessional.find((row) => row.professionalId === "pro-001")?.commission).toBe(60);
     expect(report.byService).toHaveLength(2);
   });
 });

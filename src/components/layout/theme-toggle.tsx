@@ -74,7 +74,7 @@ export function ThemeToggle() {
       aria-label="Tema escuro"
       aria-pressed={isDark}
       title={isDark ? "Ativar tema claro" : "Ativar tema escuro"}
-      className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+      className="inline-flex size-11 shrink-0 sm:size-10 items-center justify-center rounded-xl border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-900 text-ink-600 dark:text-ink-300 transition-colors hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
     >
       <Moon className="size-4 dark:hidden" aria-hidden="true" />
       <Sun className="hidden size-4 dark:block" aria-hidden="true" />

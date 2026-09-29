@@ -1,9 +1,10 @@
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
+
 import { eq } from "drizzle-orm";
 
 import {
   appointments as mockAppointments,
   clients as mockClients,
-  professionals as mockProfessionals,
   REFERENCE_TODAY,
   services as mockServices,
 } from "@/data/mock-data";
@@ -23,14 +24,6 @@ import {
   professionals,
   services,
 } from "./schema";
-
-/** Comissão de demonstração por profissional (basis points: 4000 = 40%). */
-const commissionByProfessional: Record<string, number> = {
-  "pro-001": 4000,
-  "pro-002": 3500,
-  "pro-003": 3000,
-  "pro-004": 4500,
-};
 
 /** Desloca os dados em semanas inteiras para a demonstração cair na semana atual. */
 function weekOffsetDays() {
@@ -63,39 +56,20 @@ export async function seedDemoData(db: Database) {
       .onConflictDoNothing();
   }
 
-  for (const professional of mockProfessionals) {
-    await db
-      .insert(professionals)
-      .values({
-        id: professional.id,
-        name: professional.name,
-        role: professional.role,
-        specialties: professional.specialties,
-        phone: professional.phone,
-        email: professional.email,
-        color: professional.color,
-        active: professional.active,
-        workDays: professional.workDays,
-        commissionRateBps: commissionByProfessional[professional.id] ?? 0,
-      })
-      .onConflictDoNothing();
-  }
-
-  for (const professional of mockProfessionals) {
-    for (const serviceId of professional.serviceIds) {
-      await db
-        .insert(professionalServices)
-        .values({ professionalId: professional.id, serviceId })
-        .onConflictDoNothing();
-    }
+  // O cadastro único é criado pela migration; o seed nunca recria uma equipe.
+  for (const service of mockServices) {
+    await db.insert(professionalServices).values({
+      professionalId: STUDIO_PROFESSIONAL_ID, serviceId: service.id,
+    }).onConflictDoNothing();
   }
 
   const inserted: Array<{ id: string; status: (typeof mockAppointments)[number]["status"] }> = [];
-  for (const { price, ...appointment } of mockAppointments) {
+  for (const { price, ...appointment } of mockAppointments.filter((item) => item.professionalId === STUDIO_PROFESSIONAL_ID)) {
     const [created] = await db
       .insert(appointments)
       .values({
         ...appointment,
+        professionalName: STUDIO_PROFESSIONAL_NAME,
         date: addDays(appointment.date, offset),
         priceCents: Math.round(price * 100),
         source: "staff" as const,

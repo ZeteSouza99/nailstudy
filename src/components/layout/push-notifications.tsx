@@ -155,7 +155,7 @@ export function PushNotifications() {
             <p>No iPhone ou iPad, é necessário iOS/iPadOS 16.4 ou posterior.</p>
             <ol className="list-decimal space-y-2 pl-5">
               <li>Abra este site no Safari e toque em Compartilhar.</li>
-              <li>Escolha Adicionar à Tela de Início e abra o Nail Agenda pelo novo ícone.</li>
+              <li>Escolha Adicionar à Tela de Início e abra Erika Queiroz pelo novo ícone.</li>
               <li>Entre como administrador, toque no sino e ative as notificações.</li>
             </ol>
           </div>}
@@ -163,14 +163,14 @@ export function PushNotifications() {
           {readiness === "unconfigured" && <p className="text-sm">As notificações ainda não estão disponíveis. A configuração do envio precisa ser concluída pelo responsável pelo sistema.</p>}
           {readiness === "ready" && <>
             <p className="text-sm">{subscription ? "Este dispositivo está cadastrado para receber avisos." : "Ative para receber avisos mesmo quando o painel estiver fechado."}</p>
-            {blocked && <p className="text-sm">As notificações estão bloqueadas. Permita os avisos nos ajustes do navegador ou, no iPhone, em Ajustes → Notificações → Nail Agenda. Depois, reabra esta janela.</p>}
+            {blocked && <p className="text-sm">As notificações estão bloqueadas. Permita os avisos nos ajustes do navegador ou, no iPhone, em Ajustes → Notificações → Erika Queiroz. Depois, reabra esta janela.</p>}
             <div className="flex flex-wrap gap-2">
               {subscription ? <>
                 <Button loading={busy} disabled={blocked} onClick={() => void test()}>Enviar teste</Button>
                 <Button variant="secondary" disabled={busy} onClick={() => void disable()}>Desativar neste dispositivo</Button>
               </> : <Button loading={busy} disabled={blocked} onClick={() => void enable()}>Ativar notificações</Button>}
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Ative somente nos seus dispositivos. Os avisos continuam após sair da conta, até serem desativados aqui ou nos ajustes do aparelho. Os detalhes do agendamento exigem login.</p>
+            <p className="text-xs text-ink-500 dark:text-ink-400">Ative somente nos seus dispositivos. Os avisos continuam após sair da conta, até serem desativados aqui ou nos ajustes do aparelho. Os detalhes do agendamento exigem login.</p>
           </>}
           {error && <Alert tone="error">{error}</Alert>}
           {feedback && <Alert tone="success">{feedback}</Alert>}

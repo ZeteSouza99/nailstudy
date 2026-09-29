@@ -37,8 +37,8 @@ export async function seedCatalog() {
 
   await db.insert(professionals).values([
     {
-      id: "pro-1",
-      name: "Ana",
+      id: "pro-001",
+      name: "Erika Queiroz",
       role: "Esteticista",
       phone: "(11) 99999-0001",
       email: "ana@clinica.test",
@@ -57,7 +57,8 @@ export async function seedCatalog() {
   ]);
 
   await db.insert(professionalServices).values([
-    { professionalId: "pro-1", serviceId: "srv-1" },
+    { professionalId: "pro-001", serviceId: "srv-1" },
+    { professionalId: "pro-001", serviceId: "srv-2" },
     { professionalId: "pro-2", serviceId: "srv-2" },
   ]);
 }

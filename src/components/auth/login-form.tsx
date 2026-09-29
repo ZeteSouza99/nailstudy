@@ -23,7 +23,7 @@ export function LoginForm() {
 
     try {
       const result = await signIn("credentials", {
-        email: String(formData.get("email") ?? ""),
+        username: String(formData.get("username") ?? ""),
         password: String(formData.get("password") ?? ""),
         redirect: false,
       });
@@ -32,7 +32,7 @@ export function LoginForm() {
         setError(
           result.code === "rate_limited"
             ? "Muitas tentativas de acesso. Aguarde alguns minutos e tente novamente."
-            : "E-mail ou senha inválidos.",
+            : "Usuário ou senha inválidos.",
         );
         return;
       }
@@ -47,21 +47,23 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-6 shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-900 p-6 shadow-sm">
       {error ? <Alert>{error}</Alert> : null}
 
       <div>
-        <label className="form-label" htmlFor="email">
-          E-mail
+        <label className="form-label" htmlFor="username">
+          Usuário
         </label>
         <input
-          id="email"
-          name="email"
-          type="email"
+          id="username"
+          name="username"
+          type="text"
           className="form-control"
           required
-          autoComplete="email"
-          placeholder="voce@nailagenda.com"
+          autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
+          placeholder="Erika"
         />
       </div>
 

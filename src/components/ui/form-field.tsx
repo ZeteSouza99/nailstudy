@@ -12,14 +12,14 @@ interface FormFieldProps {
 /** Rótulo, dica e erro do campo, ligados por id para leitores de tela. */
 export function FormField({ id, label, error, hint, optional, children }: FormFieldProps) {
   return (
-    <div>
+    <div className="min-w-0">
       <label className="form-label" htmlFor={id}>
         {label}
-        {optional ? <span className="font-normal text-slate-500 dark:text-slate-400"> (opcional)</span> : null}
+        {optional ? <span className="font-normal text-ink-500 dark:text-ink-400"> (opcional)</span> : null}
       </label>
       {children}
       {hint && !error ? (
-        <p id={`${id}-hint`} className="mt-1 text-[11px] text-slate-600 dark:text-slate-300">
+        <p id={`${id}-hint`} className="mt-1 text-[11px] text-ink-600 dark:text-ink-300">
           {hint}
         </p>
       ) : null}

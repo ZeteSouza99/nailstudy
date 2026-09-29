@@ -54,7 +54,7 @@ export function ClientForm({ client, today, canDelete, onCancel, onDone }: Clien
       <div className="grid gap-4 sm:grid-cols-2">
         <FormField id="client-phone" label="Telefone (WhatsApp)" error={errors.phone}>
           <div className="relative">
-            <Phone className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+            <Phone className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
             <input
               {...fieldA11y("client-phone", errors.phone)}
               name="phone"
@@ -81,7 +81,7 @@ export function ClientForm({ client, today, canDelete, onCancel, onDone }: Clien
 
       <FormField id="client-email" label="E-mail" optional error={errors.email}>
         <div className="relative">
-          <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
+          <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-400" aria-hidden="true" />
           <input
             {...fieldA11y("client-email", errors.email)}
             name="email"
@@ -109,7 +109,7 @@ export function ClientForm({ client, today, canDelete, onCancel, onDone }: Clien
         />
       </FormField>
 
-      <div className="flex items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="flex flex-col-reverse gap-2 border-t sm:flex-row sm:items-center sm:justify-between border-ink-100 dark:border-ink-800 pt-4">
         {client && canDelete ? (
           <Button variant="ghost" size="sm" onClick={() => setIsDeleting(true)}>
             <Trash2 className="size-4" aria-hidden="true" />
@@ -118,7 +118,7 @@ export function ClientForm({ client, today, canDelete, onCancel, onDone }: Clien
         ) : (
           <span />
         )}
-        <div className="flex gap-2">
+        <div className="form-actions">
           <Button variant="secondary" onClick={onCancel}>
             Cancelar
           </Button>

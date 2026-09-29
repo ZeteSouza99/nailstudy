@@ -1,74 +1,9 @@
 {
-  "id": "f077ab14-ba7b-45e8-a1c5-fc15fb4284dc",
+  "id": "c8202f4d-bdcc-40b1-9d83-5d068f97dd3e",
   "prevId": "f41de444-285a-44da-9ae8-1e8e29d37531",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.admin_push_subscriptions": {
-      "name": "admin_push_subscriptions",
-      "schema": "",
-      "columns": {
-        "endpoint": {
-          "name": "endpoint",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "p256dh": {
-          "name": "p256dh",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "auth": {
-          "name": "auth",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "admin_push_subscriptions_user_id_users_id_fk": {
-          "name": "admin_push_subscriptions_user_id_users_id_fk",
-          "tableFrom": "admin_push_subscriptions",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.appointment_events": {
       "name": "appointment_events",
       "schema": "",
@@ -1390,6 +1325,13 @@
           "notNull": true,
           "default": 1
         },
+        "username": {
+          "name": "username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Erika'"
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -1425,6 +1367,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "singleton_key"
+          ]
+        },
+        "users_username_unique": {
+          "name": "users_username_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "username"
           ]
         },
         "users_email_unique": {

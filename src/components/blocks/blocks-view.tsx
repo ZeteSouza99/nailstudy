@@ -56,16 +56,16 @@ export function BlocksView({ blocks, professionals, today, canManage }: BlocksVi
 
       <section className="surface-card overflow-hidden" aria-label="Bloqueios atuais e futuros">
         {blocks.length ? (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          <ul className="divide-y divide-ink-100 dark:divide-ink-800">
             {blocks.map((block) => (
               <li key={block.id} className="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
                 <div className="flex min-w-0 items-start gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400">
                     <Ban className="size-4" aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 dark:text-slate-50">{block.reason}</p>
-                    <p className="text-xs text-slate-600 dark:text-slate-300">
+                    <p className="font-semibold text-ink-900 dark:text-ink-50">{block.reason}</p>
+                    <p className="text-xs text-ink-600 dark:text-ink-300">
                       {block.professionalId
                         ? (nameByProfessional.get(block.professionalId) ?? "Profissional removida")
                         : "Estúdio inteiro"}
@@ -87,7 +87,7 @@ export function BlocksView({ blocks, professionals, today, canManage }: BlocksVi
             ))}
           </ul>
         ) : (
-          <EmptyState title="Nenhum bloqueio programado" description="A agenda segue o horário normal de cada profissional." />
+          <EmptyState title="Nenhum bloqueio programado" description="A agenda segue o horário de atendimento de Erika Queiroz." />
         )}
       </section>
 

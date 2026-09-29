@@ -1,11 +1,11 @@
-# Nail Agenda
+# Erika Queiroz · Nail Designer
 
 Sistema de agendamento e gestão para manicures, pedicures e nail designers.
 
 O projeto possui duas áreas:
 
-- **Painel administrativo:** visão geral, agenda diária e semanal, pedidos do portal, clientes, catálogo de serviços, profissionais, bloqueios, pagamentos e relatórios.
-- **Portal da cliente:** escolha do serviço e da profissional, consulta de horários livres, agendamento, remarcação e cancelamento por link seguro.
+- **Painel administrativo:** visão geral, agenda diária e semanal, pedidos do portal, clientes, catálogo de serviços, horários do estúdio, bloqueios, pagamentos e relatórios.
+- **Portal da cliente:** escolha do serviço e do horário, agendamento com Erika Queiroz, remarcação e cancelamento por link seguro.
 
 O catálogo de demonstração inclui manicure, pedicure, esmaltação em gel, alongamento em fibra, manutenção, reparo, spa dos pés e nail art. O sistema também oferece tema claro e escuro com preferência salva no navegador.
 
@@ -31,7 +31,9 @@ DATABASE_URL="pglite:./.data/dev"
 AUTH_SECRET="gere-um-segredo-forte"
 APP_URL="http://localhost:3000"
 ADMIN_EMAIL="admin@nailagenda.com"
-ADMIN_PASSWORD="uma-senha-com-10-ou-mais-caracteres"
+ADMIN_USERNAME="Erika"
+ADMIN_NAME="Erika"
+ADMIN_PASSWORD="uma-senha-com-8-ou-mais-caracteres"
 ```
 
 Depois execute:
@@ -61,7 +63,9 @@ O seed é idempotente: registros com os mesmos identificadores não são duplica
 
 ## Acesso administrativo
 
-O sistema possui uma única conta de administrador, com acesso a todas as telas. Profissionais são cadastros operacionais da agenda e não possuem login próprio. Execute `db:seed-admin` novamente para atualizar nome, e-mail ou senha do administrador existente.
+O sistema possui uma única conta administrativa, com acesso a todas as telas. O login aceita o usuário configurado em `ADMIN_USERNAME` (padrão: `Erika`), sem diferenciar maiúsculas de minúsculas, ou o e-mail cadastrado. Profissionais são cadastros operacionais da agenda e não possuem login próprio. Execute `db:seed-admin` novamente para atualizar usuário, nome, e-mail ou senha da administradora existente. A senha é fornecida por `ADMIN_PASSWORD` e armazenada no banco somente como hash bcrypt.
+
+A identidade visual usa a logo em `public/erika-nails.png`. As paletas `brand`, `ink` e `gold` ficam em `src/app/globals.css` e atendem aos temas claro e escuro. O ícone do site é gerado a partir do monograma dessa mesma imagem.
 
 ## Comandos
 
@@ -80,11 +84,13 @@ npm run db:seed-admin   # cria ou atualiza a administradora
 ## Regras da agenda
 
 - Atendimento de segunda a sábado, das 08:00 às 19:00.
-- Cada profissional possui dias, jornada, intervalo, serviços e comissão próprios.
-- Bloqueios podem valer para todo o estúdio ou somente para uma profissional.
+- Erika Queiroz é a única profissional. Dias, jornada e intervalo são configurados em **Meu estúdio**; todo novo serviço fica vinculado a ela automaticamente.
+- Os bloqueios valem sempre para a agenda inteira do estúdio.
 - O sistema impede horários sobrepostos para a profissional e para a cliente.
 - Serviços podem ter tempo de preparação adicional entre atendimentos.
 - Apenas atendimentos concluídos e ainda não cobrados aparecem no caixa.
+
+A migration `0008_single_professional` arquiva os outros cadastros sem excluir atendimentos ou recibos. Os IDs históricos permanecem no banco; as consultas os tratam como parte da agenda única de Erika, inclusive ao calcular disponibilidade e relatórios. A API atribui Erika no servidor, mesmo quando recebe um identificador antigo de profissional.
 
 ## Notificações no celular da administradora
 

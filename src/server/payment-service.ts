@@ -1,4 +1,5 @@
 import "server-only";
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
 
 import { and, eq, inArray } from "drizzle-orm";
 import type { z } from "zod";
@@ -78,8 +79,8 @@ export async function createPayment(
     const commissionRate = bpsToPercent(row.commissionRateBps);
     return {
       appointmentId: row.id,
-      professionalId: row.professionalId,
-      professionalName: row.professionalName,
+      professionalId: STUDIO_PROFESSIONAL_ID,
+      professionalName: STUDIO_PROFESSIONAL_NAME,
       serviceId: row.serviceId,
       serviceName: row.serviceName,
       price,

@@ -38,7 +38,7 @@ beforeEach(async () => {
   await db.insert(appointments).values({
     id: "apt-1", date: "2026-09-02", startTime: "10:00", endTime: "11:00",
     clientId: "cli-1", clientName: "Carla Souza", serviceId: "srv-1", serviceName: "Limpeza de pele",
-    professionalId: "pro-1", professionalName: "Ana", status: "completed", priceCents: 15000,
+    professionalId: "pro-001", professionalName: "Erika Queiroz", status: "completed", priceCents: 15000,
   });
 });
 

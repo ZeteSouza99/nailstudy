@@ -31,7 +31,7 @@ import type {
 
 const statusSummary: Array<{ status: AppointmentStatus; label: string; color: string }> = [
   { status: "confirmed", label: "Confirmados", color: "bg-sky-500" },
-  { status: "scheduled", label: "Agendados", color: "bg-slate-500" },
+  { status: "scheduled", label: "Agendados", color: "bg-ink-500" },
   { status: "in-progress", label: "Em atendimento", color: "bg-amber-500" },
   { status: "completed", label: "Concluídos", color: "bg-emerald-500" },
   { status: "cancelled", label: "Cancelados", color: "bg-rose-500" },
@@ -145,14 +145,14 @@ export function DashboardView({
       description: "Reserve um horário",
       href: "/agenda?novo=1",
       icon: CalendarPlus,
-      color: "bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300",
+      color: "bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300",
     },
     canCreateClient && {
       label: "Cadastrar cliente",
       description: "Adicione à sua base",
       href: "/clientes?novo=1",
       icon: UserRoundPlus,
-      color: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300",
+      color: "bg-ink-100 dark:bg-ink-800 text-ink-600 dark:text-ink-300",
     },
   ].filter((action) => action !== false);
 
@@ -166,7 +166,7 @@ export function DashboardView({
           canCreateAppointment ? (
             <Link
               href="/agenda?novo=1"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-brand-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-ink-900"
             >
               <Plus className="size-4" aria-hidden="true" />
               Novo agendamento
@@ -180,15 +180,15 @@ export function DashboardView({
           const Icon = metric.icon;
           return (
             <article key={metric.id} className="surface-card flex items-start gap-3.5 p-4">
-              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+              <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-ink-100 dark:bg-ink-800 text-ink-500 dark:text-ink-400">
                 <Icon className="size-5" aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{metric.label}</p>
-                <p className="mt-0.5 text-2xl font-bold tracking-tight tabular-nums text-slate-900 dark:text-slate-50">
+                <p className="text-xs font-medium text-ink-500 dark:text-ink-400">{metric.label}</p>
+                <p className="mt-0.5 text-2xl font-bold tracking-tight tabular-nums text-ink-900 dark:text-ink-50">
                   {metric.value}
                 </p>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{metric.detail}</p>
+                <p className="mt-1 text-xs text-ink-500 dark:text-ink-400">{metric.detail}</p>
               </div>
             </article>
           );
@@ -197,25 +197,25 @@ export function DashboardView({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(310px,0.85fr)]">
         <section className="surface-card overflow-hidden" aria-labelledby="upcoming-title">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 px-4 py-4 sm:px-5">
+          <div className="flex items-center justify-between gap-3 border-b border-ink-100 dark:border-ink-800 px-4 py-4 sm:px-5">
             <div>
-              <h2 id="upcoming-title" className="font-bold text-slate-900 dark:text-slate-50">
+              <h2 id="upcoming-title" className="font-bold text-ink-900 dark:text-ink-50">
                 Próximos atendimentos
               </h2>
-              <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-300">
+              <p className="mt-0.5 text-xs text-ink-600 dark:text-ink-300">
                 {upcoming.length} compromissos ativos hoje
               </p>
             </div>
             <Link
               href="/agenda"
-              className="inline-flex items-center gap-1 text-xs font-bold text-teal-700 dark:text-teal-300 hover:text-teal-900 dark:hover:text-teal-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+              className="inline-flex items-center gap-1 text-xs font-bold text-brand-700 dark:text-brand-300 hover:text-brand-900 dark:hover:text-brand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
             >
               Ver agenda
               <ArrowRight className="size-3.5" aria-hidden="true" />
             </Link>
           </div>
           {upcoming.length ? (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-ink-100 dark:divide-ink-800">
               {upcoming.map((appointment) => (
                 <AppointmentListItem
                   key={appointment.id}
@@ -236,31 +236,31 @@ export function DashboardView({
           <section className="surface-card p-5" aria-labelledby="week-title">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 id="week-title" className="font-bold text-slate-900 dark:text-slate-50">
+                <h2 id="week-title" className="font-bold text-ink-900 dark:text-ink-50">
                   Ritmo da semana
                 </h2>
-                <p className="mt-0.5 text-xs text-slate-600 dark:text-slate-300">Ocupação por dia</p>
+                <p className="mt-0.5 text-xs text-ink-600 dark:text-ink-300">Ocupação por dia</p>
               </div>
-              <span className="rounded-lg bg-teal-50 dark:bg-teal-950 px-2 py-1 text-xs font-bold text-teal-700 dark:text-teal-300">
+              <span className="rounded-lg bg-brand-50 dark:bg-brand-950 px-2 py-1 text-xs font-bold text-brand-700 dark:text-brand-300">
                 {weekAppointments.filter((item) => item.status !== "cancelled").length} atendimentos
               </span>
             </div>
             <div className="mt-6 flex h-32 items-end justify-between gap-2" aria-label="Gráfico de ocupação semanal">
               {weeklyPerformance.map((item) => (
                 <div key={item.date} className="flex h-full flex-1 flex-col items-center justify-end gap-2">
-                  <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300" aria-hidden="true">
+                  <span className="text-[10px] font-semibold text-ink-600 dark:text-ink-300" aria-hidden="true">
                     {item.appointments} · {item.value}%
                   </span>
                   <span className="sr-only">
                     {item.day}: {item.appointments} atendimentos e {item.value}% de ocupação.
                   </span>
-                  <div className="flex h-22 w-full max-w-8 items-end overflow-hidden rounded-t-lg bg-slate-100 dark:bg-slate-800" aria-hidden="true">
+                  <div className="flex h-22 w-full max-w-8 items-end overflow-hidden rounded-t-lg bg-ink-100 dark:bg-ink-800" aria-hidden="true">
                     <div
-                      className={cn("w-full rounded-t-lg", item.current ? "bg-teal-600" : "bg-teal-200 dark:bg-teal-700")}
+                      className={cn("w-full rounded-t-lg", item.current ? "bg-brand-600" : "bg-brand-200 dark:bg-brand-700")}
                       style={{ height: `${item.value}%` }}
                     />
                   </div>
-                  <span className={cn("text-[11px] font-semibold", item.current ? "text-teal-700 dark:text-teal-300" : "text-slate-600 dark:text-slate-300")}>
+                  <span className={cn("text-[11px] font-semibold", item.current ? "text-brand-700 dark:text-brand-300" : "text-ink-600 dark:text-ink-300")}>
                     {item.day}
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export function DashboardView({
 
           {quickActions.length ? (
             <section className="surface-card p-5" aria-labelledby="quick-title">
-              <h2 id="quick-title" className="font-bold text-slate-900 dark:text-slate-50">
+              <h2 id="quick-title" className="font-bold text-ink-900 dark:text-ink-50">
                 Ações rápidas
               </h2>
               <div className="mt-3 grid gap-2">
@@ -280,17 +280,17 @@ export function DashboardView({
                     <Link
                       key={action.label}
                       href={action.href}
-                      className="group flex items-center gap-3 rounded-xl border border-slate-100 dark:border-slate-800 p-3 transition hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+                      className="group flex items-center gap-3 rounded-xl border border-ink-100 dark:border-ink-800 p-3 transition hover:border-ink-200 dark:hover:border-ink-700 hover:bg-ink-50 dark:hover:bg-ink-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
                     >
                       <span className={cn("flex size-9 items-center justify-center rounded-xl", action.color)}>
                         <Icon className="size-4.5" aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-semibold text-slate-800 dark:text-slate-100">{action.label}</span>
-                        <span className="block text-xs text-slate-600 dark:text-slate-300">{action.description}</span>
+                        <span className="block text-sm font-semibold text-ink-800 dark:text-ink-100">{action.label}</span>
+                        <span className="block text-xs text-ink-600 dark:text-ink-300">{action.description}</span>
                       </span>
                       <ArrowRight
-                        className="size-4 text-slate-300 dark:text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-slate-500 dark:group-hover:text-slate-400"
+                        className="size-4 text-ink-300 dark:text-ink-600 transition group-hover:translate-x-0.5 group-hover:text-ink-500 dark:group-hover:text-ink-400"
                         aria-hidden="true"
                       />
                     </Link>
@@ -305,10 +305,10 @@ export function DashboardView({
       <section className="surface-card p-5" aria-labelledby="summary-title">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 id="summary-title" className="font-bold text-slate-900 dark:text-slate-50">
+            <h2 id="summary-title" className="font-bold text-ink-900 dark:text-ink-50">
               Resumo da agenda semanal
             </h2>
-            <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+            <p className="mt-1 text-xs text-ink-600 dark:text-ink-300">
               Todos os atendimentos, incluindo cancelados, entre segunda e sábado
             </p>
           </div>
@@ -317,19 +317,19 @@ export function DashboardView({
               <div key={item.status}>
                 <div className="flex items-center gap-2">
                   <span className={cn("size-2 rounded-full", item.color)} aria-hidden="true" />
-                  <span className="text-xs text-slate-600 dark:text-slate-300">{item.label}</span>
+                  <span className="text-xs text-ink-600 dark:text-ink-300">{item.label}</span>
                 </div>
-                <p className="mt-1 pl-4 text-xl font-extrabold text-slate-900 dark:text-slate-50">
+                <p className="mt-1 pl-4 text-xl font-extrabold text-ink-900 dark:text-ink-50">
                   {weekAppointments.filter((appointment) => appointment.status === item.status).length}
                 </p>
               </div>
             ))}
             <div>
               <div className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-teal-500" aria-hidden="true" />
-                <span className="text-xs text-slate-600 dark:text-slate-300">Capacidade livre</span>
+                <span className="size-2 rounded-full bg-brand-500" aria-hidden="true" />
+                <span className="text-xs text-ink-600 dark:text-ink-300">Capacidade livre</span>
               </div>
-              <p className="mt-1 pl-4 text-xl font-extrabold text-slate-900 dark:text-slate-50">
+              <p className="mt-1 pl-4 text-xl font-extrabold text-ink-900 dark:text-ink-50">
                 {formatDuration(Math.max(0, weeklyCapacity - weeklyBooked))}
               </p>
             </div>

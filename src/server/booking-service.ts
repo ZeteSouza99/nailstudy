@@ -86,14 +86,10 @@ export async function listAvailability(
     loadDayContext(query.date),
   ]);
 
-  const eligible = allProfessionals.filter(
-    (professional) => !query.professionalId || professional.id === query.professionalId,
-  );
-
   return getAvailableSlots({
     date: query.date,
     service,
-    professionals: eligible,
+    professionals: allProfessionals,
     appointments: context.appointments,
     blocks: context.blocks,
     today: getTodayKey(),

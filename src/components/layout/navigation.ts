@@ -62,7 +62,7 @@ const navigationSections: NavigationSection[] = [
       },
       { label: "Serviços", href: "/servicos", icon: Scissors },
       {
-        label: "Profissionais",
+        label: "Meu estúdio",
         href: "/profissionais",
         icon: UserRound,
       },
@@ -96,8 +96,8 @@ export const routeMetadata: Record<string, { title: string; section: string }> =
   "/agenda/pendentes": { title: "Pendentes do portal", section: "Atendimentos" },
   "/clientes": { title: "Clientes", section: "Relacionamento" },
   "/servicos": { title: "Serviços", section: "Catálogo" },
-  "/profissionais": { title: "Profissionais", section: "Equipe" },
-  "/bloqueios": { title: "Bloqueios de agenda", section: "Equipe" },
+  "/profissionais": { title: "Meu estúdio", section: "Estúdio" },
+  "/bloqueios": { title: "Bloqueios de agenda", section: "Estúdio" },
   "/pagamentos": { title: "Pagamentos", section: "Financeiro" },
   "/relatorios": { title: "Relatórios", section: "Financeiro" },
 };

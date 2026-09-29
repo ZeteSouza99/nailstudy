@@ -39,31 +39,31 @@ export function BookingConfirmed({ confirmation }: BookingConfirmedProps) {
           <CalendarCheck className="size-5" aria-hidden="true" />
         </span>
         <div>
-          <h1 className="text-lg font-bold text-slate-950 dark:text-slate-50">
+          <h1 className="text-lg font-bold text-ink-950 dark:text-ink-50">
             Agendamento registrado
           </h1>
-          <p className="text-sm text-slate-600 dark:text-slate-300">
+          <p className="text-sm text-ink-600 dark:text-ink-300">
             Aguardando confirmação do estúdio.
           </p>
         </div>
       </div>
 
-      <dl className="mt-4 space-y-2 rounded-xl bg-slate-50 dark:bg-slate-950 p-4 text-sm">
+      <dl className="mt-4 space-y-2 rounded-xl bg-ink-50 dark:bg-ink-950 p-4 text-sm">
         <div className="flex justify-between gap-4">
-          <dt className="text-slate-500 dark:text-slate-400">Serviço</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-50">
+          <dt className="text-ink-500 dark:text-ink-400">Serviço</dt>
+          <dd className="font-medium text-ink-900 dark:text-ink-50">
             {confirmation.serviceName}
           </dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-slate-500 dark:text-slate-400">Profissional</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-50">
+          <dt className="text-ink-500 dark:text-ink-400">Profissional</dt>
+          <dd className="font-medium text-ink-900 dark:text-ink-50">
             {confirmation.professionalName}
           </dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-slate-500 dark:text-slate-400">Data</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-50">
+          <dt className="text-ink-500 dark:text-ink-400">Data</dt>
+          <dd className="font-medium text-ink-900 dark:text-ink-50">
             {formatDate(confirmation.date, {
               weekday: "long",
               day: "2-digit",
@@ -72,14 +72,14 @@ export function BookingConfirmed({ confirmation }: BookingConfirmedProps) {
           </dd>
         </div>
         <div className="flex justify-between gap-4">
-          <dt className="text-slate-500 dark:text-slate-400">Horário</dt>
-          <dd className="font-medium text-slate-900 dark:text-slate-50">
+          <dt className="text-ink-500 dark:text-ink-400">Horário</dt>
+          <dd className="font-medium text-ink-900 dark:text-ink-50">
             {confirmation.startTime} às {confirmation.endTime}
           </dd>
         </div>
       </dl>
 
-      <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">
+      <p className="mt-4 text-sm text-ink-600 dark:text-ink-300">
         Guarde o link abaixo. É por ele que você acompanha, remarca ou cancela
         este atendimento.
       </p>
@@ -91,7 +91,7 @@ export function BookingConfirmed({ confirmation }: BookingConfirmedProps) {
         </Button>
         <Link
           href={path}
-          className="inline-flex h-9 items-center gap-2 rounded-lg bg-teal-700 px-3 text-sm font-semibold text-white transition-colors hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900"
+          className="inline-flex min-h-11 items-center sm:min-h-9 gap-2 rounded-lg bg-brand-700 px-3 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-ink-900"
         >
           <ExternalLink className="size-4" aria-hidden="true" />
           Abrir meu agendamento

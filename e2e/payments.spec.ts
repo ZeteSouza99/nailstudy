@@ -49,7 +49,7 @@ test.describe("caixa", () => {
     const receipt = page.getByRole("article").filter({ hasText: "Caixa E2E dividido" });
     await expect(receipt).toContainText(/210,00/);
     await expect(receipt).toContainText(/Pix.*100,25.*Dinheiro.*109,75/);
-    await expect(receipt).toContainText(/comissão.*88,00/);
+    await expect(receipt).toContainText("sem comissão");
     const next = await openPayment(page);
     await expect(next.getByText("Caixa Fluxo", { exact: true })).toHaveCount(0);
   });

@@ -9,6 +9,7 @@ import type {
   services,
 } from "@/db/schema";
 import { normalizeTime } from "@/lib/date";
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
 import type {
   Appointment,
   Client,
@@ -36,8 +37,9 @@ export function toAppointment(row: typeof appointments.$inferSelect): Appointmen
     clientName: row.clientName,
     serviceId: row.serviceId,
     serviceName: row.serviceName,
-    professionalId: row.professionalId,
-    professionalName: row.professionalName,
+    // Os IDs antigos ficam arquivados no banco; toda a agenda agora ocupa Erika.
+    professionalId: STUDIO_PROFESSIONAL_ID,
+    professionalName: STUDIO_PROFESSIONAL_NAME,
     status: row.status,
     price: centsToReais(row.priceCents),
     notes: row.notes ?? undefined,
@@ -116,7 +118,7 @@ export function toClient(row: typeof clients.$inferSelect): Client {
 export function toBlock(row: typeof scheduleBlocks.$inferSelect): ScheduleBlock {
   return {
     id: row.id,
-    professionalId: row.professionalId,
+    professionalId: null,
     startDate: row.startDate,
     endDate: row.endDate,
     startTime: optionalTime(row.startTime),
@@ -143,8 +145,8 @@ export function toPayment(
     notes: row.notes,
     items: items.map((item) => ({
       appointmentId: item.appointmentId,
-      professionalId: item.professionalId,
-      professionalName: item.professionalName,
+      professionalId: STUDIO_PROFESSIONAL_ID,
+      professionalName: STUDIO_PROFESSIONAL_NAME,
       serviceId: item.serviceId,
       serviceName: item.serviceName,
       price: centsToReais(item.priceCents),

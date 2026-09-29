@@ -13,6 +13,9 @@ import {
   scheduleBlocks,
   services,
 } from "@/db/schema";
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
+import type { studioSettingsSchema } from "@/lib/validation";
+
 import { ACTIVE_APPOINTMENT_STATUSES } from "@/lib/booking";
 import { getTodayKey } from "@/lib/date";
 import { formatPhone, normalizePhone } from "@/lib/phone";
@@ -31,7 +34,7 @@ import type {
 } from "@/types/domain";
 
 import { UserError } from "./errors";
-import { percentToBps, reaisToCents } from "./mappers";
+import { reaisToCents } from "./mappers";
 
 type ClientInput = z.infer<typeof clientSchema>;
 type ServiceInput = z.infer<typeof serviceSchema>;
@@ -134,7 +137,10 @@ function serviceValues(input: ServiceInput) {
 
 export async function createService(input: ServiceInput): Promise<Service> {
   const service: Service = { id: createId("srv"), ...input };
-  await db.insert(services).values({ id: service.id, ...serviceValues(input) });
+  await atomic([
+    db.insert(services).values({ id: service.id, ...serviceValues(input) }),
+    db.insert(professionalServices).values({ professionalId: STUDIO_PROFESSIONAL_ID, serviceId: service.id }),
+  ]);
   return service;
 }
 
@@ -159,116 +165,34 @@ export async function deleteService(id: string) {
   await db.delete(services).where(eq(services.id, id));
 }
 
-async function assertServicesExist(serviceIds: string[]) {
-  const found = await db
-    .select({ id: services.id })
-    .from(services)
-    .where(inArray(services.id, serviceIds));
-
-  if (found.length !== new Set(serviceIds).size) {
-    throw new UserError("Algum dos serviços selecionados não existe mais.", {
-      serviceIds: "Algum dos serviços selecionados não existe mais.",
-    });
-  }
-}
-
-function professionalValues(input: ProfessionalInput) {
-  return {
-    name: input.name,
-    role: input.role,
-    specialties: input.specialties,
-    phone: formatPhone(input.phone),
-    email: input.email,
-    color: input.color,
-    active: input.active,
-    workDays: input.workDays,
-    workStart: input.workStart,
-    workEnd: input.workEnd,
-    breakStart: input.breakStart ?? null,
-    breakEnd: input.breakEnd ?? null,
-  };
-}
-
-function serviceLinks(professionalId: string, serviceIds: string[]) {
-  return [...new Set(serviceIds)].map((serviceId) => ({ professionalId, serviceId }));
-}
-
-export async function createProfessional(input: ProfessionalInput): Promise<Professional> {
-  await assertServicesExist(input.serviceIds);
-  const id = createId("pro");
-  const values = professionalValues(input);
-  const commissionRateBps = percentToBps(input.commissionPercent);
-
-  await atomic([
-    db.insert(professionals).values({ id, ...values, commissionRateBps }),
-    db.insert(professionalServices).values(serviceLinks(id, input.serviceIds)),
-  ]);
-
-  return {
-    id,
-    ...values,
-    commissionRate: input.commissionPercent,
-    serviceIds: [...new Set(input.serviceIds)],
-  };
+export async function createProfessional(): Promise<Professional> {
+  throw new UserError("O estúdio possui apenas Erika Queiroz. Não é possível adicionar outra profissional.");
 }
 
 export async function updateProfessional(id: string, input: ProfessionalInput) {
-  await assertServicesExist(input.serviceIds);
-  const [existing] = await db
-    .select({ id: professionals.id })
-    .from(professionals)
-    .where(eq(professionals.id, id))
-    .limit(1);
-
-  if (!existing) {
-    throw new UserError("Profissional não encontrada.");
-  }
-
-  const values = professionalValues(input);
-
-  await atomic([
-    db
-      .update(professionals)
-      .set({ ...values, commissionRateBps: percentToBps(input.commissionPercent) })
-      .where(eq(professionals.id, id)),
-    db.delete(professionalServices).where(eq(professionalServices.professionalId, id)),
-    db.insert(professionalServices).values(serviceLinks(id, input.serviceIds)),
-    db
-      .update(appointments)
-      .set({ professionalName: values.name })
-      .where(futureActiveAppointments(appointments.professionalId, id)),
-  ]);
+  if (id !== STUDIO_PROFESSIONAL_ID) throw new UserError("Somente Erika Queiroz pode ser configurada.");
+  await updateStudioSettings(input);
 }
 
-export async function deleteProfessional(id: string) {
-  if (await countAppointments(appointments.professionalId, id)) {
-    throw new UserError(
-      "Esta profissional já tem atendimentos registrados. Desative-a em vez de excluir.",
-    );
-  }
-  await db.delete(professionals).where(eq(professionals.id, id));
+export async function deleteProfessional() {
+  throw new UserError("Erika Queiroz é a única profissional e não pode ser excluída.");
+}
+
+export async function updateStudioSettings(input: z.infer<typeof studioSettingsSchema>) {
+  await db.update(professionals).set({
+    active: input.active, workDays: input.workDays, workStart: input.workStart, workEnd: input.workEnd,
+    name: STUDIO_PROFESSIONAL_NAME,
+    breakStart: input.breakStart ?? null, breakEnd: input.breakEnd ?? null,
+  }).where(eq(professionals.id, STUDIO_PROFESSIONAL_ID));
 }
 
 export async function createBlock(
   input: BlockInput,
   actor: SessionUser,
 ): Promise<{ block: ScheduleBlock; affectedAppointments: number }> {
-  if (input.professionalId) {
-    const [professional] = await db
-      .select({ id: professionals.id })
-      .from(professionals)
-      .where(eq(professionals.id, input.professionalId))
-      .limit(1);
-    if (!professional) {
-      throw new UserError("Profissional não encontrada.", {
-        professionalId: "Profissional não encontrada.",
-      });
-    }
-  }
-
   const block: ScheduleBlock = {
     id: createId("blk"),
-    professionalId: input.professionalId ?? null,
+    professionalId: null,
     startDate: input.startDate,
     endDate: input.endDate,
     startTime: input.allDay ? null : (input.startTime ?? null),

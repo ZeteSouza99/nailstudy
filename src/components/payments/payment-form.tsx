@@ -57,7 +57,7 @@ export function PaymentForm(props: PaymentFormProps) {
 
   if (!result) {
     return (
-      <p role="status" className="p-6 text-sm text-slate-600 dark:text-slate-300">
+      <p role="status" className="p-6 text-sm text-ink-600 dark:text-ink-300">
         Carregando atendimentos a cobrar...
       </p>
     );
@@ -167,8 +167,8 @@ function PaymentFields({
   if (!billable.length) {
     return (
       <div className="space-y-4 p-5 text-center sm:p-6">
-        <Receipt className="mx-auto size-8 text-slate-300 dark:text-slate-600" aria-hidden="true" />
-        <p className="text-sm text-slate-600 dark:text-slate-300">
+        <Receipt className="mx-auto size-8 text-ink-300 dark:text-ink-600" aria-hidden="true" />
+        <p className="text-sm text-ink-600 dark:text-ink-300">
           Nenhum atendimento concluído aguardando pagamento. Conclua um atendimento na agenda para
           registrar o recibo.
         </p>
@@ -187,34 +187,34 @@ function PaymentFields({
 
       <div>
         <p className="form-label">Atendimentos a cobrar</p>
-        <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">
+        <p className="mb-2 text-xs text-ink-500 dark:text-ink-400">
           Selecione um ou mais atendimentos concluídos de uma mesma cliente.
         </p>
-        <div className="max-h-56 space-y-3 overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+        <div className="max-h-56 space-y-3 overflow-y-auto rounded-xl border border-ink-200 dark:border-ink-700 p-3">
           {clientGroups.map((group) => {
             const disabled = selectedClientId !== null && selectedClientId !== group.id;
             return (
               <div key={group.id} className={disabled ? "opacity-40" : undefined}>
-                <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+                <p className="text-xs font-bold uppercase tracking-wide text-ink-400">
                   {group.name}
                 </p>
                 <div className="mt-1 space-y-1">
                   {group.items.map((item) => (
                     <label
                       key={item.id}
-                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-950"
+                      className="flex min-h-11 cursor-pointer flex-wrap items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-ink-50 dark:hover:bg-ink-950"
                     >
                       <input
                         type="checkbox"
-                        className="size-4 accent-teal-700"
+                        className="size-4 shrink-0 accent-brand-700"
                         checked={selected.has(item.id)}
                         disabled={disabled}
                         onChange={() => toggle(item)}
                       />
-                      <span className="min-w-0 flex-1 truncate text-slate-700 dark:text-slate-200">
+                      <span className="min-w-0 flex-1 break-words text-ink-700 dark:text-ink-200">
                         {formatDate(item.date)} · {item.serviceName} · {item.professionalName}
                       </span>
-                      <span className="font-semibold text-slate-900 dark:text-slate-50">
+                      <span className="font-semibold text-ink-900 dark:text-ink-50">
                         {formatCurrency(item.price)}
                       </span>
                     </label>
@@ -226,7 +226,7 @@ function PaymentFields({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <FormField id="payment-date" label="Data">
           <input
             {...fieldA11y("payment-date")}
@@ -259,19 +259,19 @@ function PaymentFields({
         </FormField>
       </div>
 
-      <div className="rounded-xl bg-slate-50 dark:bg-slate-950 p-3">
-        <div className="flex items-center justify-between text-sm text-slate-600 dark:text-slate-300">
+      <div className="rounded-xl bg-ink-50 dark:bg-ink-950 p-3">
+        <div className="flex items-center justify-between text-sm text-ink-600 dark:text-ink-300">
           <span>Subtotal</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        <div className="mt-1 flex items-center justify-between text-base font-bold text-slate-950 dark:text-slate-50">
+        <div className="mt-1 flex items-center justify-between text-base font-bold text-ink-950 dark:text-ink-50">
           <span>Total a pagar</span>
           <span>{formatCurrency(total)}</span>
         </div>
       </div>
 
       <div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="form-label">Formas de pagamento</p>
           <Button
             type="button"
@@ -285,9 +285,9 @@ function PaymentFields({
         </div>
         <div className="space-y-2">
           {methods.map((row, index) => (
-            <div key={index} className="flex items-center gap-2">
+            <div key={index} className="grid grid-cols-2 items-center gap-2 rounded-xl border border-ink-200 p-3 dark:border-ink-700 sm:flex sm:border-0 sm:p-0">
               <select
-                className="form-control w-40"
+                className="form-control col-span-2 sm:w-36 sm:shrink-0"
                 value={row.method}
                 aria-label="Forma de pagamento"
                 onChange={(event) =>
@@ -308,7 +308,7 @@ function PaymentFields({
               </select>
               <input
                 inputMode="decimal"
-                className="form-control flex-1"
+                className="form-control col-span-2 sm:flex-1"
                 placeholder="0,00"
                 aria-label="Valor"
                 value={row.amount}
@@ -364,7 +364,7 @@ function PaymentFields({
         />
       </FormField>
 
-      <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="form-actions border-t border-ink-100 dark:border-ink-800 pt-4">
         <Button variant="secondary" onClick={onCancel}>
           Cancelar
         </Button>

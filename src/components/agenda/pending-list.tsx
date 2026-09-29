@@ -46,7 +46,7 @@ export function PendingList({ appointments }: { appointments: Appointment[] }) {
       <PageHeader
         eyebrow="Atendimentos"
         title="Pendentes do portal"
-        description="Pedidos feitos pelas clientes online que aguardam a confirmação do administrador."
+        description="Pedidos feitos pelas clientes online que aguardam a confirmação de Erika."
       />
 
       {feedback ? (
@@ -57,19 +57,19 @@ export function PendingList({ appointments }: { appointments: Appointment[] }) {
 
       <section className="surface-card overflow-hidden" aria-label="Pedidos pendentes">
         {visible.length ? (
-          <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          <ul className="divide-y divide-ink-100 dark:divide-ink-800">
             {visible.map((appointment) => (
               <li
                 key={appointment.id}
                 className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
               >
                 <div className="min-w-0">
-                  <p className="font-semibold text-slate-900 dark:text-slate-50">{appointment.clientName}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                  <p className="font-semibold text-ink-900 dark:text-ink-50">{appointment.clientName}</p>
+                  <p className="text-sm text-ink-600 dark:text-ink-300">
                     {appointment.serviceName} com {appointment.professionalName} ·{" "}
                     {formatCurrency(appointment.price)}
                   </p>
-                  <p className="text-xs font-medium capitalize text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-medium capitalize text-ink-500 dark:text-ink-400">
                     {formatDate(appointment.date, { weekday: "long", day: "2-digit", month: "long" })}
                     , {appointment.startTime} às {appointment.endTime}
                   </p>
@@ -98,9 +98,9 @@ export function PendingList({ appointments }: { appointments: Appointment[] }) {
         )}
       </section>
 
-      <p className="text-center text-xs text-slate-600 dark:text-slate-300">
+      <p className="text-center text-xs text-ink-600 dark:text-ink-300">
         Para remarcar um pedido, abra-o na{" "}
-        <Link href="/agenda" className="font-semibold text-teal-700 dark:text-teal-300 hover:text-teal-900 dark:hover:text-teal-200">
+        <Link href="/agenda" className="font-semibold text-brand-700 dark:text-brand-300 hover:text-brand-900 dark:hover:text-brand-200">
           agenda
         </Link>
         .

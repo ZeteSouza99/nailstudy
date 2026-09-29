@@ -11,6 +11,7 @@ import {
 } from "@/lib/booking";
 import { getCurrentTime, getTodayKey } from "@/lib/date";
 import { validateAppointment } from "@/lib/scheduling";
+import { STUDIO_PROFESSIONAL_ID } from "@/lib/studio";
 import type { Appointment, Professional, ScheduleBlock, Service } from "@/types/domain";
 
 import { UserError } from "./errors";
@@ -73,7 +74,8 @@ export async function assertBookable(request: BookingRequest): Promise<BookableS
     });
   }
 
-  const professional = await getProfessional(request.professionalId);
+  // A identidade vem do servidor, inclusive para formulários antigos ainda abertos.
+  const professional = await getProfessional(STUDIO_PROFESSIONAL_ID);
 
   if (!professional || !professional.active) {
     throw new UserError("Profissional indisponível.", {

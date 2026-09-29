@@ -42,6 +42,11 @@ export function Modal({
     dialog.showModal();
 
     const frame = window.requestAnimationFrame(() => {
+      // On touch screens, keep the keyboard closed until a field is tapped.
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        dialog.focus({ preventScroll: true });
+        return;
+      }
       const initialFocus = dialog.querySelector<HTMLElement>(
         "[data-modal-initial-focus], input:not([type='hidden']):not([disabled]), select:not([disabled]), textarea:not([disabled])",
       );
@@ -59,6 +64,8 @@ export function Modal({
   return (
     <dialog
       ref={dialogRef}
+      tabIndex={-1}
+      autoFocus
       aria-labelledby={titleId}
       aria-describedby={description ? descriptionId : undefined}
       onCancel={(event) => {
@@ -76,15 +83,15 @@ export function Modal({
           event.clientY > bounds.bottom;
         if (outside) onCloseRef.current();
       }}
-      className="fixed inset-0 z-70 m-0 mt-auto max-h-[92vh] w-full max-w-none overflow-y-auto rounded-t-3xl bg-white dark:bg-slate-900 p-0 text-left text-slate-950 dark:text-slate-50 shadow-2xl backdrop:bg-slate-950/45 backdrop:backdrop-blur-[2px] sm:m-auto sm:max-w-lg sm:rounded-3xl"
+      className="fixed inset-0 z-70 m-0 mt-auto max-h-[92dvh] w-full max-w-none overflow-y-auto overscroll-contain rounded-t-3xl bg-white dark:bg-ink-900 p-0 pb-[env(safe-area-inset-bottom)] text-left text-ink-950 dark:text-ink-50 shadow-2xl backdrop:bg-ink-950/45 backdrop:backdrop-blur-[2px] sm:m-auto sm:max-w-lg sm:rounded-3xl"
     >
-      <div className="flex items-start justify-between gap-4 border-b border-slate-100 dark:border-slate-800 px-5 py-5 sm:px-6">
-        <div>
-          <h2 id={titleId} className="text-lg font-bold text-slate-950 dark:text-slate-50">
+      <div className="sticky top-0 z-10 flex items-start justify-between gap-3 border-b border-ink-100 bg-white dark:border-ink-800 dark:bg-ink-900 px-5 py-4 sm:px-6 sm:py-5">
+        <div className="min-w-0 break-words">
+          <h2 id={titleId} className="text-lg font-bold text-ink-950 dark:text-ink-50">
             {title}
           </h2>
           {description ? (
-            <p id={descriptionId} className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            <p id={descriptionId} className="mt-1 text-sm text-ink-600 dark:text-ink-300">
               {description}
             </p>
           ) : null}
@@ -92,7 +99,7 @@ export function Modal({
         <button
           type="button"
           onClick={() => onCloseRef.current()}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl text-ink-500 dark:text-ink-400 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-900 dark:hover:text-ink-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:size-9"
           aria-label="Fechar janela"
         >
           <X className="size-5" aria-hidden="true" />

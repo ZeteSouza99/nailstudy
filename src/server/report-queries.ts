@@ -1,4 +1,5 @@
 import "server-only";
+import { STUDIO_PROFESSIONAL_ID, STUDIO_PROFESSIONAL_NAME } from "@/lib/studio";
 
 import { and, asc, count, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
 
@@ -108,8 +109,8 @@ export async function getFinancialReport(from: string, to: string): Promise<Fina
       .where(paidWindow),
     db
       .select({
-        professionalId: paymentItems.professionalId,
-        professionalName: paymentItems.professionalName,
+        professionalId: sql<string>`${STUDIO_PROFESSIONAL_ID}::text`,
+        professionalName: sql<string>`${STUDIO_PROFESSIONAL_NAME}::text`,
         itemsCount: count(),
         revenue: sql<number>`sum(${paymentItems.priceCents})::int`,
         commission: sql<number>`sum(${paymentItems.commissionCents})::int`,
@@ -117,7 +118,7 @@ export async function getFinancialReport(from: string, to: string): Promise<Fina
       .from(paymentItems)
       .innerJoin(payments, eq(payments.id, paymentItems.paymentId))
       .where(paidWindow)
-      .groupBy(paymentItems.professionalId, paymentItems.professionalName)
+      .having(sql`count(*) > 0`)
       .orderBy(desc(sql`sum(${paymentItems.priceCents})`)),
     db
       .select({

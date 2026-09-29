@@ -10,6 +10,7 @@ import {
   serviceSchema,
   staffRescheduleSchema,
   statusChangeSchema,
+  studioSettingsSchema,
 } from "@/lib/validation";
 import { refreshApp, runAction } from "@/server/action";
 import {
@@ -34,6 +35,7 @@ import {
   updateClient,
   updateProfessional,
   updateService,
+  updateStudioSettings,
 } from "@/server/registry-service";
 import { requireActionUser } from "@/server/session";
 
@@ -91,10 +93,10 @@ export async function deleteServiceAction(id: unknown) {
   });
 }
 
-export async function createProfessionalAction(input: unknown) {
+export async function createProfessionalAction() {
   return runAction(async () => {
     await requireActionUser();
-    const professional = await createProfessional(parseInput(professionalSchema, input));
+    const professional = await createProfessional();
     refreshApp();
     return professional;
   });
@@ -109,10 +111,10 @@ export async function updateProfessionalAction(id: unknown, input: unknown) {
   });
 }
 
-export async function deleteProfessionalAction(id: unknown) {
+export async function deleteProfessionalAction() {
   return runAction(async () => {
     await requireActionUser();
-    await deleteProfessional(parseInput(idSchema, id));
+    await deleteProfessional();
     refreshApp();
     return null;
   });
@@ -213,5 +215,14 @@ export async function searchClientsAction(query: unknown) {
   return runAction(async () => {
     await requireActionUser();
     return searchClientOptions(String(query ?? "").slice(0, 80));
+  });
+}
+
+export async function updateStudioSettingsAction(input: unknown) {
+  return runAction(async () => {
+    await requireActionUser();
+    await updateStudioSettings(parseInput(studioSettingsSchema, input));
+    refreshApp();
+    return null;
   });
 }

@@ -11,7 +11,7 @@ import { cn } from "@/lib/formatters";
 import { getNavigationSections, type NavigationCounters } from "./navigation";
 
 const itemClass =
-  "flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600";
+  "flex min-w-0 flex-col items-center gap-0.5 rounded-xl px-1 py-1.5 text-[10px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600";
 
 export function MobileNavigation({
   counters,
@@ -23,11 +23,12 @@ export function MobileNavigation({
   const items = getNavigationSections().flatMap((section) => section.items);
   const primary = items.filter((item) => item.primaryOnMobile);
   const secondary = items.filter((item) => !item.primaryOnMobile);
+  const secondaryActive = secondary.some((item) => pathname === item.href);
 
   return (
     <>
       <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(15,23,42,0.07)] backdrop-blur-xl lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-ink-200 dark:border-ink-700 bg-white/95 dark:bg-ink-900/95 px-1 pb-[max(0.35rem,env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_30px_rgba(15,23,42,0.07)] backdrop-blur-xl lg:hidden"
         aria-label="Navegação móvel"
       >
         <div
@@ -46,12 +47,12 @@ export function MobileNavigation({
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={cn(itemClass, active ? "text-teal-700 dark:text-teal-300" : "text-slate-500 dark:text-slate-400")}
+                className={cn(itemClass, active ? "text-brand-700 dark:text-brand-300" : "text-ink-500 dark:text-ink-400")}
               >
                 <span
                   className={cn(
                     "relative flex h-6 w-10 items-center justify-center rounded-lg transition",
-                    active && "bg-teal-50 dark:bg-teal-950",
+                    active && "bg-brand-50 dark:bg-brand-950",
                   )}
                 >
                   <Icon className="size-4.5" strokeWidth={active ? 2.5 : 2} aria-hidden="true" />
@@ -69,9 +70,11 @@ export function MobileNavigation({
           <button
             type="button"
             onClick={() => setIsMoreOpen(true)}
-            className={cn(itemClass, "text-slate-500 dark:text-slate-400")}
+            aria-expanded={isMoreOpen}
+            aria-haspopup="dialog"
+            className={cn(itemClass, secondaryActive ? "text-brand-700 dark:text-brand-300" : "text-ink-500 dark:text-ink-400")}
           >
-            <span className="flex h-6 w-10 items-center justify-center rounded-lg">
+            <span className={cn("flex h-6 w-10 items-center justify-center rounded-lg", secondaryActive && "bg-brand-50 dark:bg-brand-950")}>
               <Menu className="size-4.5" aria-hidden="true" />
             </span>
             <span className="w-full truncate text-center">Mais</span>
@@ -87,10 +90,11 @@ export function MobileNavigation({
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={pathname === item.href ? "page" : undefined}
                 onClick={() => setIsMoreOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-950"
+                className={cn("flex min-h-11 items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-950", pathname === item.href && "bg-brand-50 dark:bg-brand-950")}
               >
-                <Icon className="size-4.5 text-slate-400" aria-hidden="true" />
+                <Icon className="size-4.5 text-ink-400" aria-hidden="true" />
                 {item.label}
               </Link>
             );
@@ -99,17 +103,17 @@ export function MobileNavigation({
             href="/agendar"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-950"
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-950"
           >
-            <Globe className="size-4.5 text-slate-400" aria-hidden="true" />
+            <Globe className="size-4.5 text-ink-400" aria-hidden="true" />
             Portal da cliente
           </a>
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-950"
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-ink-700 dark:text-ink-200 hover:bg-ink-50 dark:hover:bg-ink-950"
           >
-            <LogOut className="size-4.5 text-slate-400" aria-hidden="true" />
+            <LogOut className="size-4.5 text-ink-400" aria-hidden="true" />
             Sair
           </button>
         </div>

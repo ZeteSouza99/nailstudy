@@ -17,22 +17,22 @@ export function SearchInput({
   const hasValue = typeof value === "string" && value.length > 0;
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative min-w-0", className)}>
       <Search
         aria-hidden="true"
-        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-400"
       />
       <input
         type="search"
         value={value}
-        className="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-9 pr-9 text-sm text-slate-900 dark:text-slate-50 outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-3 focus:ring-teal-100 dark:focus:ring-teal-900"
+        className="form-control pl-9 pr-11 placeholder:text-ink-400"
         {...props}
       />
       {hasValue && onClear ? (
         <button
           type="button"
           onClick={onClear}
-          className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+          className="absolute right-0 top-1/2 inline-flex size-11 -translate-y-1/2 items-center justify-center rounded-lg text-ink-400 hover:bg-ink-100 dark:hover:bg-ink-800 hover:text-ink-700 dark:hover:text-ink-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 sm:right-1 sm:size-9"
           aria-label="Limpar busca"
         >
           <X className="size-3.5" aria-hidden="true" />

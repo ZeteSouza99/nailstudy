@@ -41,7 +41,7 @@ function booking(overrides: Partial<Parameters<typeof createPublicBooking>[0]> =
     lastName: "Silva",
     phone: "(11) 98888-7777",
     serviceId: "srv-1",
-    professionalId: "pro-1",
+    professionalId: "pro-001",
     date: "2026-09-02",
     startTime: "10:00",
     ...overrides,
@@ -143,12 +143,12 @@ describe("agendamento pelo portal", () => {
     // Termina 11:00 + 15 min de preparo: o próximo horário da grade é 11:30.
     expect(times).not.toContain("11:00");
     expect(times).toContain("11:30");
-    expect(new Set(slots.map((slot) => slot.professionalId))).toEqual(new Set(["pro-2"]));
+    expect(new Set(slots.map((slot) => slot.professionalId))).toEqual(new Set(["pro-001"]));
   });
 
   it("não remarca para além da janela do portal e remarca dentro dela", async () => {
     const created = await createPublicBooking(booking(), ctx);
-    const input = { token: created.token, professionalId: "pro-1", startTime: "10:00" };
+    const input = { token: created.token, professionalId: "pro-001", startTime: "10:00" };
 
     await expect(reschedulePublicBooking({ ...input, date: "2026-12-01" })).rejects.toThrow(
       /fora do período/,
@@ -161,10 +161,10 @@ describe("agendamento pelo portal", () => {
 
   it("não oferece nem aceita profissional inativa", async () => {
     const { db } = await getTestDatabase();
-    await db.update(professionals).set({ active: false }).where(eq(professionals.id, "pro-1"));
+    await db.update(professionals).set({ active: false }).where(eq(professionals.id, "pro-001"));
 
     const catalog = await getBookingCatalog();
-    expect(catalog.services.map((service) => service.id)).toEqual(["srv-2"]);
+    expect(catalog.services).toEqual([]);
     await expect(createPublicBooking(booking(), ctx)).rejects.toThrow(/Profissional indisponível/);
   });
 });
@@ -186,8 +186,8 @@ describe("garantias do banco", () => {
         clientName: "Carla Souza",
         serviceId: "srv-1",
         serviceName: "Limpeza de pele",
-        professionalId: "pro-1",
-        professionalName: "Ana",
+        professionalId: "pro-001",
+        professionalName: "Erika Queiroz",
         priceCents: 15000,
         source: "portal",
       })
@@ -217,8 +217,8 @@ describe("garantias do banco", () => {
           clientName: "Nova",
           serviceId: "srv-1",
           serviceName: "Limpeza de pele",
-          professionalId: "pro-1",
-          professionalName: "Ana",
+          professionalId: "pro-001",
+          professionalName: "Erika Queiroz",
           priceCents: 15000,
           source: "portal",
         }),

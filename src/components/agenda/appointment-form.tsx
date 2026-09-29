@@ -1,7 +1,7 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { createAppointmentAction } from "@/app/actions";
 import { fieldError, useFormAction } from "@/components/forms/use-form-action";
@@ -9,7 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { fieldA11y, FormField } from "@/components/ui/form-field";
 import { formatCurrency } from "@/lib/formatters";
-import { CLINIC_CLOSE_TIME, CLINIC_OPEN_TIME, getWorkDayLabel } from "@/lib/scheduling";
+import { CLINIC_CLOSE_TIME, CLINIC_OPEN_TIME } from "@/lib/scheduling";
 import { appointmentSchema } from "@/lib/validation";
 import type { Appointment, Professional, Service } from "@/types/domain";
 
@@ -26,7 +26,6 @@ interface AppointmentFormProps {
 
 export function AppointmentForm({
   services,
-  professionals,
   defaultDate,
   today,
   onCancel,
@@ -34,23 +33,11 @@ export function AppointmentForm({
 }: AppointmentFormProps) {
   const [serviceId, setServiceId] = useState("");
   const [date, setDate] = useState(defaultDate < today ? today : defaultDate);
-  const [professionalId, setProfessionalId] = useState("");
   const [state, onSubmit, isPending] = useFormAction(
     appointmentSchema,
     createAppointmentAction,
     onCreated,
   );
-
-  const eligibleProfessionals = useMemo(() => {
-    const dayLabel = getWorkDayLabel(date);
-    if (!serviceId || !dayLabel || dayLabel === "Dom") return [];
-    return professionals.filter(
-      (professional) =>
-        professional.active &&
-        professional.serviceIds.includes(serviceId) &&
-        professional.workDays.includes(dayLabel),
-    );
-  }, [date, professionals, serviceId]);
 
   const errors = {
     clientId: fieldError(state, "clientId"),
@@ -75,7 +62,6 @@ export function AppointmentForm({
           value={serviceId}
           onChange={(event) => {
             setServiceId(event.target.value);
-            setProfessionalId("");
           }}
         >
           <option value="" disabled>
@@ -91,7 +77,7 @@ export function AppointmentForm({
         </select>
       </FormField>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 min-[400px]:grid-cols-2">
         <FormField id="appointment-date" label="Data" error={errors.date}>
           <input
             {...fieldA11y("appointment-date", errors.date)}
@@ -102,8 +88,7 @@ export function AppointmentForm({
             value={date}
             onChange={(event) => {
               setDate(event.target.value);
-              setProfessionalId("");
-            }}
+              }}
           />
         </FormField>
         <FormField id="appointment-time" label="Horário" error={errors.startTime}>
@@ -120,36 +105,7 @@ export function AppointmentForm({
         </FormField>
       </div>
 
-      <FormField
-        id="appointment-professional"
-        label="Profissional"
-        error={errors.professionalId}
-        hint="A lista considera o serviço habilitado, o dia de trabalho e quem está ativa."
-      >
-        <select
-          {...fieldA11y(
-            "appointment-professional",
-            errors.professionalId,
-            "A lista considera o serviço habilitado, o dia de trabalho e quem está ativa.",
-          )}
-          name="professionalId"
-          className="form-control"
-          value={professionalId}
-          disabled={!serviceId || !date}
-          onChange={(event) => setProfessionalId(event.target.value)}
-        >
-          <option value="" disabled>
-            {eligibleProfessionals.length
-              ? "Selecione uma profissional"
-              : "Nenhuma profissional disponível"}
-          </option>
-          {eligibleProfessionals.map((professional) => (
-            <option key={professional.id} value={professional.id}>
-              {professional.name} ({professional.workStart}–{professional.workEnd})
-            </option>
-          ))}
-        </select>
-      </FormField>
+      <p className="text-sm text-ink-500 dark:text-ink-400">Atendimento com Erika Queiroz.</p>
 
       <FormField id="appointment-notes" label="Observações" optional error={errors.notes}>
         <textarea
@@ -162,7 +118,7 @@ export function AppointmentForm({
         />
       </FormField>
 
-      <div className="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-4">
+      <div className="form-actions border-t border-ink-100 dark:border-ink-800 pt-4">
         <Button variant="secondary" onClick={onCancel}>
           Cancelar
         </Button>

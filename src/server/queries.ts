@@ -14,6 +14,7 @@ import {
 import { ACTIVE_APPOINTMENT_STATUSES } from "@/lib/booking";
 import { getWeekDays } from "@/lib/date";
 import { normalizeText } from "@/lib/formatters";
+import { STUDIO_PROFESSIONAL_ID } from "@/lib/studio";
 import type {
   Appointment,
   ClientSummary,
@@ -33,7 +34,7 @@ export async function listServices(): Promise<Service[]> {
 
 export async function listProfessionals(): Promise<Professional[]> {
   const [rows, links] = await Promise.all([
-    db.select().from(professionals).orderBy(asc(professionals.name)),
+    db.select().from(professionals).where(eq(professionals.id, STUDIO_PROFESSIONAL_ID)),
     db.select().from(professionalServices),
   ]);
 

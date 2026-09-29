@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { STUDIO_PROFESSIONAL_ID } from "./studio";
+
 import { getTodayKey } from "./date";
 import { isValidPhone } from "./phone";
 import {
@@ -191,7 +193,9 @@ export const professionalSchema = z
     breakStart: optionalTime,
     breakEnd: optionalTime,
   })
-  .superRefine((value, ctx) => {
+  .superRefine(validateWorkSchedule);
+
+function validateWorkSchedule(value: { workStart: string; workEnd: string; breakStart?: string; breakEnd?: string }, ctx: z.RefinementCtx) {
     const start = timeToMinutes(value.workStart);
     const end = timeToMinutes(value.workEnd);
 
@@ -224,12 +228,21 @@ export const professionalSchema = z
         });
       }
     }
-  });
+  }
+
+export const studioSettingsSchema = z.object({
+  active: checkbox,
+  workDays: stringList(z.enum(BUSINESS_DAYS), { min: 1, max: 6, message: "Selecione ao menos um dia de atendimento." }),
+  workStart: timeKey,
+  workEnd: timeKey,
+  breakStart: optionalTime,
+  breakEnd: optionalTime,
+}).superRefine(validateWorkSchedule);
 
 export const appointmentSchema = z.object({
   clientId: requiredId("Selecione uma cliente."),
   serviceId: requiredId("Selecione um serviço."),
-  professionalId: requiredId("Selecione uma profissional."),
+  professionalId: idSchema.default(STUDIO_PROFESSIONAL_ID),
   date: dateKey,
   startTime: timeKey,
   notes: optionalText(500),
@@ -252,7 +265,7 @@ export const staffRescheduleSchema = z.object({
   id: idSchema,
   date: dateKey,
   startTime: timeKey,
-  professionalId: requiredId("Selecione uma profissional."),
+  professionalId: idSchema.default(STUDIO_PROFESSIONAL_ID),
 });
 
 export const blockSchema = z
@@ -303,7 +316,7 @@ export const publicBookingSchema = z.object({
   lastName: z.string().trim().min(2, "Informe seu sobrenome.").max(60),
   phone: phoneField,
   serviceId: idSchema,
-  professionalId: idSchema,
+  professionalId: idSchema.default(STUDIO_PROFESSIONAL_ID),
   date: dateKey,
   startTime: timeKey,
   notes: optionalText(300),
@@ -320,7 +333,7 @@ export const rescheduleSchema = z.object({
   token: accessTokenSchema,
   date: dateKey,
   startTime: timeKey,
-  professionalId: idSchema,
+  professionalId: idSchema.default(STUDIO_PROFESSIONAL_ID),
 });
 
 export const recoveryRequestSchema = z.object({ phone: phoneField });

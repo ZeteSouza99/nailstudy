@@ -78,21 +78,21 @@ export function ReportsView({ report }: { report: FinancialReport }) {
       <PageHeader
         eyebrow="Financeiro"
         title="Relatórios"
-        description="Faturamento, comissões, formas de pagamento e ocupação da equipe no período."
+        description="Faturamento, comissões, formas de pagamento e ocupação da agenda de Erika no período."
       />
 
       <PeriodFilter from={range.from} to={range.to} />
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Resumo do período">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Resumo do período">
         {stats.map((stat) => (
           <article key={stat.label} className="surface-card flex items-center gap-3 p-4">
-            <span className="inline-flex size-11 items-center justify-center rounded-xl bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300">
+            <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300">
               <stat.icon className="size-5" aria-hidden="true" />
             </span>
             <div>
-              <p className="text-2xl font-extrabold text-slate-950 dark:text-slate-50">{stat.value}</p>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{stat.label}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{stat.detail}</p>
+              <p className="text-2xl font-extrabold text-ink-950 dark:text-ink-50">{stat.value}</p>
+              <p className="text-sm font-medium text-ink-600 dark:text-ink-300">{stat.label}</p>
+              <p className="text-xs text-ink-500 dark:text-ink-400">{stat.detail}</p>
             </div>
           </article>
         ))}
@@ -100,27 +100,27 @@ export function ReportsView({ report }: { report: FinancialReport }) {
 
       <section className="surface-card grid grid-cols-2 gap-4 p-4 text-sm sm:grid-cols-4">
         <div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Descontos</p>
-          <p className="font-semibold text-slate-900 dark:text-slate-50">{formatCurrency(summary.discounts)}</p>
+          <p className="text-xs text-ink-500 dark:text-ink-400">Descontos</p>
+          <p className="font-semibold text-ink-900 dark:text-ink-50">{formatCurrency(summary.discounts)}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Acréscimos</p>
-          <p className="font-semibold text-slate-900 dark:text-slate-50">{formatCurrency(summary.surcharges)}</p>
+          <p className="text-xs text-ink-500 dark:text-ink-400">Acréscimos</p>
+          <p className="font-semibold text-ink-900 dark:text-ink-50">{formatCurrency(summary.surcharges)}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Estornado</p>
-          <p className="font-semibold text-slate-900 dark:text-slate-50">{formatCurrency(summary.refunded)}</p>
+          <p className="text-xs text-ink-500 dark:text-ink-400">Estornado</p>
+          <p className="font-semibold text-ink-900 dark:text-ink-50">{formatCurrency(summary.refunded)}</p>
         </div>
         <div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Líquido p/ estúdio</p>
-          <p className="font-semibold text-slate-900 dark:text-slate-50">
+          <p className="text-xs text-ink-500 dark:text-ink-400">Líquido p/ estúdio</p>
+          <p className="font-semibold text-ink-900 dark:text-ink-50">
             {formatCurrency(summary.received - summary.commission)}
           </p>
         </div>
       </section>
 
       <ReportSection
-        title="Por profissional"
+        title="Atendimentos de Erika"
         icon={BarChart3}
         empty={!byProfessional.length}
         onExport={() =>
@@ -137,8 +137,8 @@ export function ReportsView({ report }: { report: FinancialReport }) {
           ])
         }
       >
-        <table className="w-full text-sm">
-          <thead className="text-left text-xs uppercase tracking-wide text-slate-400">
+        <table role="table" className="responsive-table w-full text-sm">
+          <thead className="text-left text-xs uppercase tracking-wide text-ink-400">
             <tr>
               <th className="px-4 py-2 font-semibold">Profissional</th>
               <th className="px-4 py-2 text-right font-semibold">Atend.</th>
@@ -147,18 +147,18 @@ export function ReportsView({ report }: { report: FinancialReport }) {
               <th className="px-4 py-2 text-right font-semibold">Ocupação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-ink-100 dark:divide-ink-800">
             {byProfessional.map((row) => (
               <tr key={row.professionalId}>
-                <td className="px-4 py-2 font-medium text-slate-900 dark:text-slate-50">{row.professionalName}</td>
-                <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-300">{row.itemsCount}</td>
-                <td className="px-4 py-2 text-right font-semibold text-slate-900 dark:text-slate-50">
+                <td data-label="Profissional" className="px-4 py-2 font-medium text-ink-900 dark:text-ink-50">{row.professionalName}</td>
+                <td data-label="Atendimentos" className="px-4 py-2 text-right text-ink-600 dark:text-ink-300">{row.itemsCount}</td>
+                <td data-label="Receita" className="px-4 py-2 text-right font-semibold text-ink-900 dark:text-ink-50">
                   {formatCurrency(row.revenue)}
                 </td>
-                <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-300">
+                <td data-label="Comissão" className="px-4 py-2 text-right text-ink-600 dark:text-ink-300">
                   {formatCurrency(row.commission)}
                 </td>
-                <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-300">{row.occupancy}%</td>
+                <td data-label="Ocupação" className="px-4 py-2 text-right text-ink-600 dark:text-ink-300">{row.occupancy}%</td>
               </tr>
             ))}
           </tbody>
@@ -176,20 +176,20 @@ export function ReportsView({ report }: { report: FinancialReport }) {
           ])
         }
       >
-        <table className="w-full text-sm">
-          <thead className="text-left text-xs uppercase tracking-wide text-slate-400">
+        <table role="table" className="responsive-table w-full text-sm">
+          <thead className="text-left text-xs uppercase tracking-wide text-ink-400">
             <tr>
               <th className="px-4 py-2 font-semibold">Serviço</th>
               <th className="px-4 py-2 text-right font-semibold">Qtd.</th>
               <th className="px-4 py-2 text-right font-semibold">Receita</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-ink-100 dark:divide-ink-800">
             {byService.map((row) => (
               <tr key={row.serviceId}>
-                <td className="px-4 py-2 font-medium text-slate-900 dark:text-slate-50">{row.serviceName}</td>
-                <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-300">{row.quantity}</td>
-                <td className="px-4 py-2 text-right font-semibold text-slate-900 dark:text-slate-50">
+                <td data-label="Serviço" className="px-4 py-2 font-medium text-ink-900 dark:text-ink-50">{row.serviceName}</td>
+                <td data-label="Quantidade" className="px-4 py-2 text-right text-ink-600 dark:text-ink-300">{row.quantity}</td>
+                <td data-label="Receita" className="px-4 py-2 text-right font-semibold text-ink-900 dark:text-ink-50">
                   {formatCurrency(row.revenue)}
                 </td>
               </tr>
@@ -209,22 +209,22 @@ export function ReportsView({ report }: { report: FinancialReport }) {
           ])
         }
       >
-        <table className="w-full text-sm">
-          <thead className="text-left text-xs uppercase tracking-wide text-slate-400">
+        <table role="table" className="responsive-table w-full text-sm">
+          <thead className="text-left text-xs uppercase tracking-wide text-ink-400">
             <tr>
               <th className="px-4 py-2 font-semibold">Forma</th>
               <th className="px-4 py-2 text-right font-semibold">Lançamentos</th>
               <th className="px-4 py-2 text-right font-semibold">Total</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-ink-100 dark:divide-ink-800">
             {byMethod.map((row) => (
               <tr key={row.method}>
-                <td className="px-4 py-2 font-medium text-slate-900 dark:text-slate-50">
+                <td data-label="Forma" className="px-4 py-2 font-medium text-ink-900 dark:text-ink-50">
                   {PAYMENT_METHOD_LABELS[row.method]}
                 </td>
-                <td className="px-4 py-2 text-right text-slate-600 dark:text-slate-300">{row.count}</td>
-                <td className="px-4 py-2 text-right font-semibold text-slate-900 dark:text-slate-50">
+                <td data-label="Lançamentos" className="px-4 py-2 text-right text-ink-600 dark:text-ink-300">{row.count}</td>
+                <td data-label="Total" className="px-4 py-2 text-right font-semibold text-ink-900 dark:text-ink-50">
                   {formatCurrency(row.amount)}
                 </td>
               </tr>
@@ -247,16 +247,16 @@ export function ReportsView({ report }: { report: FinancialReport }) {
         <ul className="space-y-2 p-4">
           {byDay.map((row) => (
             <li key={row.date} className="flex items-center gap-3 text-sm">
-              <span className="w-24 shrink-0 text-slate-600 dark:text-slate-300">
+              <span className="w-16 shrink-0 text-xs sm:w-24 sm:text-sm text-ink-600 dark:text-ink-300">
                 {formatDate(row.date, { day: "2-digit", month: "short" })}
               </span>
-              <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+              <span className="h-2.5 flex-1 overflow-hidden rounded-full bg-ink-100 dark:bg-ink-800">
                 <span
-                  className="block h-full rounded-full bg-teal-500"
+                  className="block h-full rounded-full bg-brand-500"
                   style={{ width: `${Math.round((row.revenue / maxDay) * 100)}%` }}
                 />
               </span>
-              <span className="w-24 shrink-0 text-right font-semibold text-slate-900 dark:text-slate-50">
+              <span className="shrink-0 text-right sm:w-24 font-semibold text-ink-900 dark:text-ink-50">
                 {formatCurrency(row.revenue)}
               </span>
             </li>
@@ -278,9 +278,9 @@ interface ReportSectionProps {
 function ReportSection({ title, icon: Icon, empty, onExport, children }: ReportSectionProps) {
   return (
     <section className="surface-card overflow-hidden" aria-label={title}>
-      <div className="flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 px-4 py-3">
-        <h2 className="flex items-center gap-2 font-semibold text-slate-900 dark:text-slate-50">
-          <Icon className="size-4 text-slate-400" aria-hidden="true" />
+      <div className="flex items-center justify-between gap-3 border-b border-ink-100 dark:border-ink-800 px-4 py-3">
+        <h2 className="flex min-w-0 items-center gap-2 font-semibold text-ink-900 dark:text-ink-50">
+          <Icon className="size-4 shrink-0 text-ink-400" aria-hidden="true" />
           {title}
         </h2>
         {!empty ? (

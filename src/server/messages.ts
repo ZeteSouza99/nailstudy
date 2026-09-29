@@ -52,5 +52,5 @@ export const messages = {
   reminder: (appointment: AppointmentSummary, link: string) =>
     `Lembrete: amanhã, ${when(appointment)}, você tem ${appointment.serviceName} com ${appointment.professionalName}. Detalhes: ${link}`,
   recoveryCode: (code: string) =>
-    `Seu código de acesso do Nail Agenda é ${code}. Ele vale por 10 minutos.`,
+    `Seu código de acesso da Erika Queiroz Nail Designer é ${code}. Ele vale por 10 minutos.`,
 };

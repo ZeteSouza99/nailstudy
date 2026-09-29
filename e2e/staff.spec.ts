@@ -48,13 +48,12 @@ test.describe("painel administrativo", () => {
     await form.getByRole("button", { name: /Mariana Alves/ }).click();
     await form.getByLabel("Serviço").selectOption("srv-001");
     await form.getByLabel("Data").fill(day);
-    await form.getByLabel("Profissional").selectOption("pro-001");
     await form.getByLabel("Horário").fill("07:00");
     await form.getByLabel("Observações").fill("Teste E2E");
     await form.getByRole("button", { name: "Criar agendamento" }).click();
 
     await expect(form.getByRole("alert")).toContainText("a partir das 08:00");
-    await expect(form.getByLabel("Profissional")).toHaveValue("pro-001");
+    await expect(form.getByLabel("Profissional", { exact: true })).toHaveCount(0);
     await expect(form.getByLabel("Observações")).toHaveValue("Teste E2E");
 
     await form.getByLabel("Horário").fill("10:00");
@@ -92,7 +91,6 @@ test.describe("painel administrativo", () => {
 
     await page.goto("/agendar");
     await page.getByRole("button", { name: /Esmaltação em gel premium/ }).click();
-    await page.getByRole("button", { name: /Sem preferência/ }).click();
     await page.locator("input[type=date]").fill(day);
     await expect(page.getByText("Nenhum horário livre nesta data.")).toBeVisible();
   });

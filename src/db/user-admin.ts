@@ -4,10 +4,11 @@ import { eq } from "drizzle-orm";
 import type { Database } from "./client";
 import { users } from "./schema";
 
-export const PASSWORD_MIN_LENGTH = 10;
+export const PASSWORD_MIN_LENGTH = 8;
 export const BCRYPT_COST = 12;
 
 interface AdminInput {
+  username?: string;
   email: string;
   name: string;
   password: string;
@@ -15,8 +16,13 @@ interface AdminInput {
 
 /** Cria a conta administrativa ou atualiza a única conta já existente. */
 export async function upsertAdmin(db: Database, input: AdminInput) {
+  const username = (input.username ?? "Erika").trim();
   const email = input.email.trim().toLowerCase();
   const name = input.name.trim();
+
+  if (!/^[a-zA-Z0-9._-]{3,40}$/.test(username)) {
+    throw new Error("O usuário deve ter de 3 a 40 letras, números, pontos, traços ou sublinhados.");
+  }
 
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     throw new Error("E-mail inválido.");
@@ -37,12 +43,12 @@ export async function upsertAdmin(db: Database, input: AdminInput) {
   if (existing) {
     await db
       .update(users)
-      .set({ name, email, password })
+      .set({ username, name, email, password })
       .where(eq(users.id, existing.id));
     return { id: existing.id, created: false };
   }
 
   const id = "usr-admin";
-  await db.insert(users).values({ id, name, email, password });
+  await db.insert(users).values({ id, username, name, email, password });
   return { id, created: true };
 }

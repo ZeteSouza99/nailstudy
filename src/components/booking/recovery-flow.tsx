@@ -60,8 +60,8 @@ export function RecoveryFlow() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-xl font-bold text-slate-950 dark:text-slate-50 sm:text-2xl">Encontrar meu agendamento</h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+        <h1 className="text-xl font-bold text-ink-950 dark:text-ink-50 sm:text-2xl">Encontrar meu agendamento</h1>
+        <p className="mt-1 text-sm text-ink-600 dark:text-ink-300">
           Enviamos um código para o seu WhatsApp para confirmar que é você.
         </p>
       </div>
@@ -130,33 +130,33 @@ export function RecoveryFlow() {
       {step === "list" ? (
         <section className="surface-card overflow-hidden" aria-label="Seus agendamentos">
           {appointments.length ? (
-            <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+            <ul className="divide-y divide-ink-100 dark:divide-ink-800">
               {appointments.map((appointment) => (
                 <li key={appointment.path}>
                   <Link
                     href={appointment.path}
-                    className="flex items-center justify-between gap-3 px-4 py-4 hover:bg-slate-50 dark:hover:bg-slate-950 sm:px-5"
+                    className="flex items-center justify-between gap-3 px-4 py-4 hover:bg-ink-50 dark:hover:bg-ink-950 sm:px-5"
                   >
                     <span className="min-w-0">
-                      <span className="block font-semibold text-slate-900 dark:text-slate-50">{appointment.serviceName}</span>
-                      <span className="block text-sm capitalize text-slate-600 dark:text-slate-300">
+                      <span className="block font-semibold text-ink-900 dark:text-ink-50">{appointment.serviceName}</span>
+                      <span className="block text-sm capitalize text-ink-600 dark:text-ink-300">
                         {formatDate(appointment.date, { weekday: "long", day: "2-digit", month: "long" })} às{" "}
                         {appointment.startTime}
                       </span>
-                      <span className="block text-xs text-slate-500 dark:text-slate-400">{appointment.professionalName}</span>
+                      <span className="block text-xs text-ink-500 dark:text-ink-400">{appointment.professionalName}</span>
                     </span>
                     <span className="flex shrink-0 items-center gap-2">
                       <StatusBadge kind="appointment" status={appointment.status} />
-                      <ChevronRight className="size-4 text-slate-400" aria-hidden="true" />
+                      <ChevronRight className="size-4 text-ink-400" aria-hidden="true" />
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="p-5 text-sm text-slate-600 dark:text-slate-300">
+            <p className="p-5 text-sm text-ink-600 dark:text-ink-300">
               Não encontramos agendamentos futuros para este telefone.{" "}
-              <Link href="/agendar" className="font-semibold text-teal-700 dark:text-teal-300">
+              <Link href="/agendar" className="font-semibold text-brand-700 dark:text-brand-300">
                 Agendar agora
               </Link>
             </p>

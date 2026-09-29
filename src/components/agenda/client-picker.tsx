@@ -49,13 +49,13 @@ export function ClientPicker({ name, error }: ClientPickerProps) {
       <input type="hidden" name={name} value={selected?.id ?? ""} />
 
       {selected ? (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950 px-3 py-2">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950 px-3 py-2">
           <span className="min-w-0">
-            <span className="flex items-center gap-1.5 text-sm font-semibold text-teal-900 dark:text-teal-200">
+            <span className="flex items-center gap-1.5 text-sm font-semibold text-brand-900 dark:text-brand-200">
               <Check className="size-4 shrink-0" aria-hidden="true" />
               <span className="truncate">{selected.name}</span>
             </span>
-            <span className="block text-xs text-teal-800 dark:text-teal-200">{selected.phone}</span>
+            <span className="block text-xs text-brand-800 dark:text-brand-200">{selected.phone}</span>
           </span>
           <button
             type="button"
@@ -64,7 +64,7 @@ export function ClientPicker({ name, error }: ClientPickerProps) {
               setQuery("");
               setIsOpen(true);
             }}
-            className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-teal-800 dark:text-teal-200 hover:bg-teal-100 dark:hover:bg-teal-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
+            className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-xs font-bold text-brand-800 dark:text-brand-200 hover:bg-brand-100 dark:hover:bg-brand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
           >
             <X className="size-3.5" aria-hidden="true" />
             Trocar
@@ -73,7 +73,7 @@ export function ClientPicker({ name, error }: ClientPickerProps) {
       ) : (
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-400"
             aria-hidden="true"
           />
           <input
@@ -100,12 +100,12 @@ export function ClientPicker({ name, error }: ClientPickerProps) {
               id={listId}
               role="listbox"
               aria-label="Clientes encontradas"
-              className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1 shadow-lg"
+              className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-xl border border-ink-200 dark:border-ink-700 bg-white dark:bg-ink-900 p-1 shadow-lg"
             >
               {isLoading ? (
-                <li className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400">Buscando…</li>
+                <li className="px-3 py-2 text-xs text-ink-500 dark:text-ink-400">Buscando…</li>
               ) : options.length === 0 ? (
-                <li className="px-3 py-2 text-xs text-slate-500 dark:text-slate-400">
+                <li className="px-3 py-2 text-xs text-ink-500 dark:text-ink-400">
                   Nenhuma cliente encontrada. Cadastre em Clientes.
                 </li>
               ) : (
@@ -117,10 +117,10 @@ export function ClientPicker({ name, error }: ClientPickerProps) {
                         setSelected(option);
                         setIsOpen(false);
                       }}
-                      className="flex w-full flex-col rounded-lg px-3 py-2 text-left hover:bg-slate-50 dark:hover:bg-slate-950 focus-visible:bg-slate-50 dark:focus-visible:bg-slate-950 focus-visible:outline-none"
+                      className="flex w-full flex-col rounded-lg px-3 py-2 text-left hover:bg-ink-50 dark:hover:bg-ink-950 focus-visible:bg-ink-50 dark:focus-visible:bg-ink-950 focus-visible:outline-none"
                     >
-                      <span className="text-sm font-semibold text-slate-900 dark:text-slate-50">{option.name}</span>
-                      <span className="text-xs text-slate-500 dark:text-slate-400">{option.phone}</span>
+                      <span className="text-sm font-semibold text-ink-900 dark:text-ink-50">{option.name}</span>
+                      <span className="text-xs text-ink-500 dark:text-ink-400">{option.phone}</span>
                     </button>
                   </li>
                 ))
