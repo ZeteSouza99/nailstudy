@@ -206,7 +206,7 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
           <h2 className="text-sm font-semibold text-ink-900 dark:text-ink-50">
             Qual serviço você deseja?
           </h2>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
             {catalog.services.map((item) => (
               <button
                 key={item.id}
@@ -216,7 +216,7 @@ export function BookingWizard({ catalog }: BookingWizardProps) {
                   setStep("slot");
                   void loadSlots(date, item.id);
                 }}
-                className="flex items-start gap-3 rounded-xl border border-ink-200 dark:border-ink-700 p-3 text-left transition-colors hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+                className="flex min-w-0 items-start gap-3 rounded-xl border border-ink-200 dark:border-ink-700 p-3 text-left transition-colors hover:border-brand-500 hover:bg-brand-50/40 dark:hover:bg-brand-950/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
               >
                 <span
                   className="mt-1 size-2.5 shrink-0 rounded-full"
