@@ -50,6 +50,13 @@
       "when": 1790530989101,
       "tag": "0006_single_admin_constraint",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790708470028,
+      "tag": "0007_admin_push",
+      "breakpoints": true
     }
   ]
 }

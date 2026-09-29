@@ -14,6 +14,8 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  "worker-src 'self'",
+  "manifest-src 'self'",
 ].join("; ");
 
 const nextConfig: NextConfig = {
@@ -38,6 +40,14 @@ const nextConfig: NextConfig = {
         // O token do agendamento está na URL.
         source: "/meu-agendamento/:path*",
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      },
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
+        ],
       },
     ];
   },

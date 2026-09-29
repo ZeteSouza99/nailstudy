@@ -85,3 +85,56 @@ npm run db:seed-admin   # cria ou atualiza a administradora
 - O sistema impede horários sobrepostos para a profissional e para a cliente.
 - Serviços podem ter tempo de preparação adicional entre atendimentos.
 - Apenas atendimentos concluídos e ainda não cobrados aparecem no caixa.
+
+## Notificações no celular da administradora
+
+Novos agendamentos feitos pelo portal enviam Web Push aos dispositivos que a
+administradora ativou. O aviso abre `/agenda/pendentes`, exige login para ver os
+detalhes e não mostra dados pessoais da cliente na tela bloqueada. Não é necessário
+publicar um aplicativo nas lojas ou manter o painel aberto.
+
+### Configurar o envio
+
+1. Publique o site com HTTPS.
+2. Gere um par de chaves com `npx web-push generate-vapid-keys`.
+3. Configure `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` e `VAPID_SUBJECT` no ambiente
+   do servidor. O assunto deve ser um contato real, como `mailto:admin@seu-dominio.com`.
+   A chave privada é secreta; mantenha o mesmo par nas próximas publicações.
+4. Execute `npm run db:migrate` para criar a tabela de dispositivos. Na Vercel,
+   o comando de build já aplica as migrations.
+5. Entre no painel, toque no sino, ative as notificações e use **Enviar teste**.
+
+A chave pública é obtida do servidor em tempo de execução. Não é necessário
+configurar variáveis `NEXT_PUBLIC_` para este recurso. Sem configuração válida,
+os agendamentos continuam funcionando e o painel informa que o envio está indisponível.
+
+### iPhone e iPad
+
+Requer iOS/iPadOS 16.4 ou posterior. No Safari, use **Compartilhar → Adicionar à
+Tela de Início**. Abra o sistema pelo ícone criado, entre como administradora e
+toque no sino para ativar. A autorização deve partir desse toque; uma aba comum
+do Safari não recebe esses avisos. O painel mostra as instruções de instalação.
+
+### Android e outros dispositivos
+
+Use um navegador atualizado com suporte a Web Push, como Chrome no Android.
+É possível adicionar o sistema à tela inicial; a instalação não é obrigatória
+no Chrome Android. Ative separadamente em cada aparelho desejado. O envio aceita
+os provedores da Apple, Google/FCM e Mozilla.
+
+As inscrições ficam no banco e continuam após sair da conta. Ative somente em
+dispositivos de confiança e use **Desativar neste dispositivo** antes de deixar
+de utilizá-lo. Inscrições recusadas pelo provedor com HTTP 404/410 são removidas.
+Trocar as chaves VAPID exige desativar e ativar novamente nos aparelhos.
+
+O envio ocorre depois de salvar a reserva, usando `after` do Next.js. Falhas de
+push não cancelam o agendamento. Não há fila persistente de retentativas nesta
+versão: falhas temporárias são registradas nos logs. A entrega também depende
+da conexão, das permissões e dos ajustes de Foco/bateria do aparelho. O aviso
+fica disponível no provedor por até uma hora. Remarcações e agendamentos criados
+pela própria administradora não disparam o aviso de **novo agendamento**.
+
+Para validar em aparelhos reais, use uma publicação HTTPS, ative e envie um teste
+em cada plataforma; depois feche o painel, faça uma reserva pelo portal em outro
+navegador e confirme o recebimento e a abertura dos pedidos ao tocar no aviso.
+Os testes automatizados simulam o provedor de push e não substituem essa verificação.

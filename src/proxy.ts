@@ -9,6 +9,8 @@ const { auth } = NextAuth(authConfig);
 const publicPrefixes = ["/agendar", "/meu-agendamento", "/login", "/api/auth", "/api/cron"];
 
 function isPublic(pathname: string) {
+  // O sistema operacional deve atualizar o worker e ler o manifest mesmo sem sessão.
+  if (pathname === "/sw.js" || pathname === "/manifest.webmanifest") return true;
   return publicPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );

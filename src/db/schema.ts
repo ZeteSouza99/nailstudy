@@ -177,6 +177,16 @@ export const appointments = pgTable(
   ],
 );
 
+/** Cada navegador autorizado da administradora recebe os pedidos do portal. */
+export const adminPushSubscriptions = pgTable("admin_push_subscriptions", {
+  endpoint: text("endpoint").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: createdAt(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const appointmentEvents = pgTable(
   "appointment_events",
   {

@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     template: "%s | Nail Agenda",
   },
   description: "Agendamento e gestão para profissionais de unhas.",
+  appleWebApp: { capable: true, title: "Nail Agenda", statusBarStyle: "default" },
+  icons: { apple: "/icons/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {

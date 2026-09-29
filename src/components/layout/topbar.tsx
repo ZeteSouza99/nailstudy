@@ -8,6 +8,7 @@ import { parseDateKey } from "@/lib/date";
 
 import { routeMetadata } from "./navigation";
 import { ThemeToggle } from "./theme-toggle";
+import { PushNotifications } from "./push-notifications";
 
 const topbarDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   weekday: "long",
@@ -50,6 +51,7 @@ export function Topbar({
             <span className="block font-semibold capitalize text-slate-700 dark:text-slate-200">{weekday}</span>
             {datePart}
           </p>
+          <PushNotifications />
           <ThemeToggle />
           <span className="hidden h-8 w-px bg-slate-200 dark:bg-slate-700 md:block" />
           <div

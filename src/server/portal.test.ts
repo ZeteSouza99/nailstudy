@@ -17,6 +17,9 @@ vi.mock("@/server/notifications", () => ({
   isNotificationDeliveryConfigured: vi.fn(() => true),
 }));
 
+vi.mock("@/server/admin-push", () => ({ notifyAdminNewBooking: vi.fn() }));
+const { notifyAdminNewBooking } = await import("@/server/admin-push");
+
 const { sendNotification, deliverNotification } = await import("@/server/notifications");
 const {
   cancelPublicBooking,
@@ -59,6 +62,7 @@ beforeEach(async () => {
   await seedCatalog();
   vi.mocked(sendNotification).mockClear();
   vi.mocked(deliverNotification).mockClear();
+  vi.mocked(notifyAdminNewBooking).mockClear();
 });
 
 describe("agendamento pelo portal", () => {
@@ -77,6 +81,14 @@ describe("agendamento pelo portal", () => {
     expect(sendNotification).toHaveBeenCalledWith(
       expect.objectContaining({ kind: "booking-requested", to: "11988887777" }),
     );
+    expect(notifyAdminNewBooking).toHaveBeenCalledOnce();
+  });
+
+  it("não notifica a administradora quando a reserva falha", async () => {
+    await createPublicBooking(booking(), ctx);
+    vi.mocked(notifyAdminNewBooking).mockClear();
+    await expect(createPublicBooking(booking({ phone: "11977776666" }), ctx)).rejects.toThrow();
+    expect(notifyAdminNewBooking).not.toHaveBeenCalled();
   });
 
   it("reaproveita a ficha cadastrada pela equipe sem expor o nome dela", async () => {

@@ -179,7 +179,7 @@ describe("migrations", () => {
     const tables = await fresh.db.execute(
       sql`select count(*)::int as total from information_schema.tables where table_schema = 'public'`,
     );
-    expect(tables.rows[0]).toEqual({ total: 13 });
+    expect(tables.rows[0]).toEqual({ total: 14 });
     await fresh.client.close();
   });
 

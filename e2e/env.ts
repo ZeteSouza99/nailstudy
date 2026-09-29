@@ -1,3 +1,7 @@
+import { generateVAPIDKeys } from "web-push";
+
+const pushKeys = generateVAPIDKeys();
+
 export const E2E_PORT = Number(process.env.E2E_PORT ?? 3100);
 export const E2E_DATABASE_DIR = ".e2e-db";
 
@@ -8,6 +12,9 @@ export const e2eEnv = {
   AUTH_TRUST_HOST: "true",
   NOTIFY_DRIVER: "log",
   APP_URL: `http://localhost:${E2E_PORT}`,
+  VAPID_PUBLIC_KEY: pushKeys.publicKey,
+  VAPID_PRIVATE_KEY: pushKeys.privateKey,
+  VAPID_SUBJECT: "mailto:admin@e2e.test",
 };
 
 export const e2eUsers = {

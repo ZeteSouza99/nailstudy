@@ -21,6 +21,7 @@ import type {
 import type { Appointment } from "@/types/domain";
 
 import { assertBookable, loadDayContext } from "./booking-rules";
+import { notifyAdminNewBooking } from "./admin-push";
 import { UserError } from "./errors";
 import { appointmentInsertValues } from "./mappers";
 import { appointmentUrl, messages } from "./messages";
@@ -207,6 +208,8 @@ export async function createPublicBooking(
     to: phoneDigits,
     text: messages.requested(appointment, appointmentUrl(token)),
   });
+
+  notifyAdminNewBooking(appointment.id);
 
   return {
     token,
