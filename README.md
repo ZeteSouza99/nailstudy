@@ -95,8 +95,10 @@ A migration `0008_single_professional` arquiva os outros cadastros sem excluir a
 ## Notificações no celular da administradora
 
 Novos agendamentos feitos pelo portal enviam Web Push aos dispositivos que a
-administradora ativou. O aviso abre `/agenda/pendentes`, exige login para ver os
-detalhes e não mostra dados pessoais da cliente na tela bloqueada. Não é necessário
+administradora ativou. O aviso mostra o nome da cliente, a data e o horário do
+agendamento (por exemplo, `Maria Silva · 02/09/2026 às 10:00.`), inclusive na tela
+bloqueada conforme os ajustes do aparelho. Ao tocar, abre `/agenda/pendentes`,
+que exige login para consultar o pedido completo. Não é necessário
 publicar um aplicativo nas lojas ou manter o painel aberto.
 
 ### Configurar o envio

@@ -25,6 +25,7 @@ const { getPushConfigurationAction, subscribeAdminPushAction, unsubscribeAdminPu
 const key = createECDH("prime256v1");
 key.generateKeys();
 const publicKey = key.getPublicKey().toString("base64url");
+const booking = { id: "apt-123", clientName: "Maria Silva", date: "2026-09-02", startTime: "10:00:00" };
 const subscription = (id = "device-1") => ({
   endpoint: `https://fcm.googleapis.com/fcm/send/${id}`,
   keys: { p256dh: publicKey, auth: Buffer.alloc(16, 1).toString("base64url") },
@@ -80,10 +81,10 @@ describe("notificações da administradora", () => {
       if (sub.endpoint.endsWith("temporary")) throw { statusCode: 503 };
       return { statusCode: 201, headers: {}, body: "" };
     });
-    await deliverNewBookingPush("apt-123");
+    await deliverNewBookingPush(booking);
     expect(webpush.sendNotification).toHaveBeenCalledTimes(3);
     const payload = JSON.parse(vi.mocked(webpush.sendNotification).mock.calls[0][1] as string);
-    expect(payload).toEqual({ title: "Novo agendamento", body: expect.any(String), tag: "booking-apt-123" });
+    expect(payload).toEqual({ title: "Novo agendamento", body: "Maria Silva · 02/09/2026 às 10:00.", tag: "booking-apt-123" });
     const { db } = await getTestDatabase();
     const rows = await db.select().from(adminPushSubscriptions);
     expect(rows.map((row) => row.endpoint)).toEqual(expect.arrayContaining([subscription("ok").endpoint, subscription("temporary").endpoint]));
@@ -102,13 +103,19 @@ describe("notificações da administradora", () => {
     vi.stubEnv("VAPID_PRIVATE_KEY", "");
     expect(getPushPublicKey()).toBeNull();
     expect((await subscribeAdminPushAction(subscription())).ok).toBe(false);
-    await deliverNewBookingPush("apt-1");
+    await deliverNewBookingPush(booking);
     expect(webpush.sendNotification).not.toHaveBeenCalled();
   });
 
-  it("agenda o envio após a resposta", () => {
-    notifyAdminNewBooking("apt-1");
+  it("agenda o envio com os dados da reserva após a resposta", async () => {
+    await subscribeAdminPushAction(subscription());
+    notifyAdminNewBooking(booking);
     expect(after).toHaveBeenCalledOnce();
     expect(webpush.sendNotification).not.toHaveBeenCalled();
+    const send = vi.mocked(after).mock.calls[0][0] as () => Promise<void>;
+    await send();
+    expect(JSON.parse(vi.mocked(webpush.sendNotification).mock.calls[0][1] as string)).toEqual({
+      title: "Novo agendamento", body: "Maria Silva · 02/09/2026 às 10:00.", tag: "booking-apt-123",
+    });
   });
 });

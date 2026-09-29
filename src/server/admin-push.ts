@@ -8,7 +8,10 @@ import webpush from "web-push";
 
 import { db } from "@/db";
 import { adminPushSubscriptions } from "@/db/schema";
+import { normalizeTime } from "@/lib/date";
+import { formatDate } from "@/lib/formatters";
 import type { AdminPushSubscription } from "@/lib/push-validation";
+import type { Appointment } from "@/types/domain";
 
 import { UserError } from "./errors";
 import { logger } from "./logger";
@@ -89,23 +92,25 @@ export async function sendTestPush(userId: string, endpoint: string) {
   }
 }
 
-export async function deliverNewBookingPush(appointmentId: string) {
+type BookingPushDetails = Pick<Appointment, "id" | "clientName" | "date" | "startTime">;
+
+export async function deliverNewBookingPush(appointment: BookingPushDetails) {
   if (!getPushPublicKey()) return;
   const subscriptions = await db.select().from(adminPushSubscriptions);
-  // Sem dados pessoais na tela bloqueada; os detalhes exigem login no painel.
+  const date = formatDate(appointment.date, { day: "2-digit", month: "2-digit", year: "numeric" });
   await Promise.allSettled(subscriptions.map((row) => deliver(row, {
     title: "Novo agendamento",
-    body: "Uma cliente solicitou um horário. Toque para conferir os pedidos pendentes.",
-    tag: `booking-${appointmentId}`,
+    body: `${appointment.clientName} · ${date} às ${normalizeTime(appointment.startTime)}.`,
+    tag: `booking-${appointment.id}`,
   })));
 }
 
 /** Só chamado após a transação do agendamento; falhas de push não desfazem a reserva. */
-export function notifyAdminNewBooking(appointmentId: string) {
+export function notifyAdminNewBooking(appointment: BookingPushDetails) {
   if (!getPushPublicKey()) return;
   const send = async () => {
     try {
-      await deliverNewBookingPush(appointmentId);
+      await deliverNewBookingPush(appointment);
     } catch {
       logger.warn("admin_push_dispatch_failed");
     }

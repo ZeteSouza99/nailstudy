@@ -205,7 +205,7 @@ export async function createPublicBooking(
     text: messages.requested(appointment, appointmentUrl(token)),
   });
 
-  notifyAdminNewBooking(appointment.id);
+  notifyAdminNewBooking(appointment);
 
   return {
     token,

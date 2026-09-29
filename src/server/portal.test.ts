@@ -82,6 +82,9 @@ describe("agendamento pelo portal", () => {
       expect.objectContaining({ kind: "booking-requested", to: "11988887777" }),
     );
     expect(notifyAdminNewBooking).toHaveBeenCalledOnce();
+    expect(notifyAdminNewBooking).toHaveBeenCalledWith(expect.objectContaining({
+      clientName: "Maria Silva", date: "2026-09-02", startTime: "10:00",
+    }));
   });
 
   it("não notifica a administradora quando a reserva falha", async () => {
